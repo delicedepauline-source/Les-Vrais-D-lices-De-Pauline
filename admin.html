@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Administration | Les Délices De Pauline</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+
+<body class="admin-body">
+
+
+<header class="admin-header">
+
+    <div>
+
+        <a href="index.html" class="logo">
+            Les Délices De Pauline
+        </a>
+
+        <span class="admin-label">
+            Administration
+        </span>
+
+    </div>
+
+
+    <div class="admin-header-actions">
+
+        <a href="index.html"
+           class="btn-secondary">
+
+            <i class="fa-solid fa-eye"></i>
+
+            Voir le site
+
+        </a>
+
+        <button id="adminLogout"
+                class="btn-secondary">
+
+            <i class="fa-solid fa-right-from-bracket"></i>
+
+            Déconnexion
+
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="admin-container">
+
+
+    <section class="admin-welcome">
+
+        <p class="small-title">
+            Tableau de bord
+        </p>
+
+        <h1>
+            Bienvenue dans votre espace administrateur 👑
+        </h1>
+
+        <p>
+            Gérez facilement votre boulangerie depuis cette interface.
+        </p>
+
+    </section>
+
+
+    <section class="admin-stats">
+
+        <div class="admin-stat">
+
+            <i class="fa-solid fa-cart-shopping"></i>
+
+            <div>
+
+                <span>
+                    Commandes
+                </span>
+
+                <strong id="totalOrders">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="admin-stat">
+
+            <i class="fa-solid fa-cookie-bite"></i>
+
+            <div>
+
+                <span>
+                    Produits
+                </span>
+
+                <strong id="totalProducts">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="admin-stat">
+
+            <i class="fa-solid fa-users"></i>
+
+            <div>
+
+                <span>
+                    Clients
+                </span>
+
+                <strong id="totalClients">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="admin-section">
+
+        <div class="admin-section-header">
+
+            <div>
+
+                <p class="small-title">
+                    Catalogue
+                </p>
+
+                <h2>
+                    Produits
+                </h2>
+
+            </div>
+
+
+            <button id="addProductButton"
+                    class="btn-primary">
+
+                <i class="fa-solid fa-plus"></i>
+
+                Ajouter un produit
+
+            </button>
+
+        </div>
+
+
+        <div id="productsAdminContainer"
+             class="admin-products">
+
+            <p>
+                Chargement des produits...
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <section class="admin-section">
+
+        <div class="admin-section-header">
+
+            <div>
+
+                <p class="small-title">
+                    Activité
+                </p>
+
+                <h2>
+                    Commandes récentes
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div id="adminOrdersContainer">
+
+            <p>
+                Chargement des commandes...
+            </p>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<!-- Fenêtre d'ajout/modification d'un produit -->
+
+<div id="productModal"
+     class="modal hidden">
+
+    <div class="modal-content">
+
+        <button id="closeProductModal"
+                class="modal-close">
+
+            <i class="fa-solid fa-xmark"></i>
+
+        </button>
+
+
+        <h2 id="productModalTitle">
+            Ajouter un produit
+        </h2>
+
+
+        <form id="productForm">
+
+            <input type="hidden"
+                   id="productId">
+
+
+            <div class="form-group">
+
+                <label for="productName">
+                    Nom du produit
+                </label>
+
+                <input
+                    type="text"
+                    id="productName"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="productDescription">
+                    Description
+                </label>
+
+                <textarea
+                    id="productDescription"
+                    rows="4"
+                ></textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="productPrice">
+                    Prix (€)
+                </label>
+
+                <input
+                    type="number"
+                    id="productPrice"
+                    step="0.01"
+                    min="0"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="productCategory">
+                    Catégorie
+                </label>
+
+                <select id="productCategory">
+
+                    <option value="patisseries">
+                        Pâtisseries
+                    </option>
+
+                    <option value="sandwichs">
+                        Sandwichs
+                    </option>
+
+                    <option value="boissons">
+                        Boissons
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="productImage">
+                    URL de l'image
+                </label>
+
+                <input
+                    type="text"
+                    id="productImage"
+                    placeholder="images/produit.jpg"
+                >
+
+            </div>
+
+
+            <button type="submit"
+                    class="btn-primary">
+
+                <i class="fa-solid fa-save"></i>
+
+                Enregistrer
+
+            </button>
+
+
+            <p id="productMessage"
+               class="form-message"></p>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script src="auth.js"></script>
+<script src="admin.js"></script>
+
+</body>
+</html>
