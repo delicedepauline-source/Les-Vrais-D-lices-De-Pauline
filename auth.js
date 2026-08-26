@@ -10,9 +10,11 @@ SYSTÈME DE COMPTES
 // CONFIGURATION SUPABASE
 // =======================================================
 
-const SUPABASE_URL = "TON_URL_SUPABASE";
+const SUPABASE_URL =
+    "https://qyysftxupnnfikmrjjue.supabase.co";
 
-const SUPABASE_ANON_KEY = "TA_CLE_PUBLIQUE_SUPABASE";
+const SUPABASE_ANON_KEY =
+    "sb_publishable_0FTC_yZFfch1S10KkDLGqA_pmZTxJMC";
 
 
 // =======================================================
@@ -26,13 +28,13 @@ const supabaseClient =
         {
             auth: {
 
-                // Garde la connexion après F5
+                // Conserver la connexion
                 persistSession: true,
 
-                // Renouvelle automatiquement la session
+                // Renouveler automatiquement la session
                 autoRefreshToken: true,
 
-                // Détecte les sessions dans l'URL
+                // Détecter les sessions dans l'URL
                 detectSessionInUrl: true
 
             }
@@ -49,7 +51,7 @@ document.addEventListener(
     async () => {
 
         console.log(
-            "Système de comptes démarré"
+            "Les Délices De Pauline - système de comptes"
         );
 
 
@@ -72,9 +74,7 @@ document.addEventListener(
 function setupLogin() {
 
     const form =
-        document.getElementById(
-            "loginForm"
-        );
+        document.getElementById("loginForm");
 
 
     if (!form)
@@ -90,18 +90,14 @@ function setupLogin() {
 
             const email =
                 document
-                    .getElementById(
-                        "loginEmail"
-                    )
+                    .getElementById("loginEmail")
                     .value
                     .trim();
 
 
             const password =
                 document
-                    .getElementById(
-                        "loginPassword"
-                    )
+                    .getElementById("loginPassword")
                     .value;
 
 
@@ -114,9 +110,13 @@ function setupLogin() {
             message.textContent =
                 "Connexion...";
 
-
             message.className =
                 "form-message";
+
+
+            console.log(
+                "Tentative de connexion..."
+            );
 
 
             const {
@@ -136,14 +136,13 @@ function setupLogin() {
             if (error) {
 
                 console.error(
-                    "Erreur connexion :",
+                    "Erreur de connexion :",
                     error
                 );
 
 
                 message.textContent =
                     "Adresse e-mail ou mot de passe incorrect.";
-
 
                 message.className =
                     "form-message error";
@@ -163,12 +162,16 @@ function setupLogin() {
             message.textContent =
                 "Connexion réussie !";
 
-
             message.className =
                 "form-message success";
 
 
-            // Petite pause avant redirection
+            /*
+            Supabase conserve automatiquement
+            la session dans le stockage du navigateur.
+            */
+
+
             setTimeout(
                 () => {
 
@@ -210,45 +213,35 @@ function setupRegister() {
 
             const prenom =
                 document
-                    .getElementById(
-                        "prenom"
-                    )
+                    .getElementById("prenom")
                     .value
                     .trim();
 
 
             const nom =
                 document
-                    .getElementById(
-                        "nom"
-                    )
+                    .getElementById("nom")
                     .value
                     .trim();
 
 
             const email =
                 document
-                    .getElementById(
-                        "email"
-                    )
+                    .getElementById("email")
                     .value
                     .trim();
 
 
             const telephone =
                 document
-                    .getElementById(
-                        "telephone"
-                    )
+                    .getElementById("telephone")
                     .value
                     .trim();
 
 
             const password =
                 document
-                    .getElementById(
-                        "password"
-                    )
+                    .getElementById("password")
                     .value;
 
 
@@ -266,6 +259,7 @@ function setupRegister() {
                 );
 
 
+            // Vérification du mot de passe
             if (
                 password !==
                 passwordConfirm
@@ -274,10 +268,8 @@ function setupRegister() {
                 message.textContent =
                     "Les mots de passe ne correspondent pas.";
 
-
                 message.className =
                     "form-message error";
-
 
                 return;
 
@@ -286,6 +278,10 @@ function setupRegister() {
 
             message.textContent =
                 "Création de votre compte...";
+
+
+            message.className =
+                "form-message";
 
 
             const {
@@ -327,10 +323,8 @@ function setupRegister() {
                 message.textContent =
                     error.message;
 
-
                 message.className =
                     "form-message error";
-
 
                 return;
 
@@ -338,14 +332,12 @@ function setupRegister() {
 
 
             console.log(
-                "Compte créé :",
-                data
+                "Compte créé"
             );
 
 
             message.textContent =
                 "Votre compte a été créé !";
-
 
             message.className =
                 "form-message success";
@@ -389,7 +381,7 @@ async function checkSession() {
     if (error) {
 
         console.error(
-            "Erreur session :",
+            "Erreur récupération session :",
             error
         );
 
@@ -403,7 +395,7 @@ async function checkSession() {
 
 
     // ===================================================
-    // UTILISATEUR CONNECTÉ
+    // SESSION TROUVÉE
     // ===================================================
 
     if (session) {
@@ -414,8 +406,12 @@ async function checkSession() {
         );
 
 
-        // Si on est sur connexion.html,
-        // on peut directement aller au compte.
+        /*
+        Si l'utilisateur est sur la page
+        de connexion alors qu'il est déjà
+        connecté, on l'envoie directement
+        sur son compte.
+        */
 
         if (
             document.getElementById(
@@ -431,8 +427,10 @@ async function checkSession() {
         }
 
 
-        // Si on est sur compte.html,
-        // on affiche les informations.
+        /*
+        Si on est sur compte.html,
+        on affiche les informations.
+        */
 
         loadUser(
             session.user
@@ -445,7 +443,7 @@ async function checkSession() {
 
 
     // ===================================================
-    // AUCUNE SESSION
+    // PAS DE SESSION
     // ===================================================
 
     console.log(
@@ -453,9 +451,11 @@ async function checkSession() {
     );
 
 
-    // Si on est sur compte.html
-    // et qu'il n'y a aucune session,
-    // retour à la connexion.
+    /*
+    Si on est sur compte.html
+    sans être connecté,
+    retour à connexion.html.
+    */
 
     if (
         document.getElementById(
@@ -472,7 +472,7 @@ async function checkSession() {
 
 
 // =======================================================
-// AFFICHAGE DU COMPTE
+// AFFICHER LES INFORMATIONS DU COMPTE
 // =======================================================
 
 function loadUser(user) {
@@ -587,7 +587,7 @@ function setupLogout() {
             if (error) {
 
                 console.error(
-                    "Erreur déconnexion :",
+                    "Erreur de déconnexion :",
                     error
                 );
 
@@ -598,7 +598,7 @@ function setupLogout() {
 
 
             console.log(
-                "Utilisateur déconnecté"
+                "Déconnexion réussie"
             );
 
 
@@ -612,14 +612,14 @@ function setupLogout() {
 
 
 // =======================================================
-// SURVEILLANCE DES CHANGEMENTS DE SESSION
+// SURVEILLANCE DE LA SESSION
 // =======================================================
 
 supabaseClient.auth.onAuthStateChange(
     (event, session) => {
 
         console.log(
-            "Auth event :",
+            "Événement Supabase :",
             event
         );
 
@@ -627,14 +627,14 @@ supabaseClient.auth.onAuthStateChange(
         if (session) {
 
             console.log(
-                "Session active :",
+                "Utilisateur connecté :",
                 session.user.email
             );
 
         } else {
 
             console.log(
-                "Session inexistante"
+                "Utilisateur déconnecté"
             );
 
         }
