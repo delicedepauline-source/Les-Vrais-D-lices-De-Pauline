@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Connexion | Les Délices De Pauline</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+<body>
+
+<header class="site-header">
+
+    <a href="index.html" class="logo">
+        Les Délices De Pauline
+    </a>
+
+    <a href="index.html" class="header-link">
+        <i class="fa-solid fa-arrow-left"></i>
+        Retour au site
+    </a>
+
+</header>
+
+
+<main class="auth-page">
+
+    <div class="auth-card">
+
+        <div class="auth-icon">
+            <i class="fa-solid fa-right-to-bracket"></i>
+        </div>
+
+        <h1>Bienvenue</h1>
+
+        <p class="auth-subtitle">
+            Connectez-vous à votre compte.
+        </p>
+
+
+        <form id="loginForm">
+
+            <div class="form-group">
+
+                <label for="loginEmail">
+                    Adresse e-mail
+                </label>
+
+                <input
+                    type="email"
+                    id="loginEmail"
+                    placeholder="vous@example.com"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="loginPassword">
+                    Mot de passe
+                </label>
+
+                <input
+                    type="password"
+                    id="loginPassword"
+                    placeholder="Votre mot de passe"
+                    required
+                >
+
+            </div>
+
+
+            <button type="submit" class="btn-primary auth-button">
+
+                <i class="fa-solid fa-right-to-bracket"></i>
+
+                Se connecter
+
+            </button>
+
+
+            <p id="loginMessage" class="form-message"></p>
+
+        </form>
+
+
+        <div class="auth-footer">
+
+            <p>
+                Vous n'avez pas encore de compte ?
+                <a href="inscription.html">Créer un compte</a>
+            </p>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<script src="auth.js"></script>
+
+</body>
+</html>
