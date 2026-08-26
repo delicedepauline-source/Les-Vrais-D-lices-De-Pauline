@@ -797,9 +797,9 @@ document.getElementById("year")
 renderProducts();
 
 renderCart();
-// ===============================
-// SUPABASE
-// ===============================
+console.log("TEST SCRIPT.JS OK");
+
+console.log("Supabase disponible :", typeof supabase);
 
 const SUPABASE_URL = "https://qyysftxupnnfikmrjjue.supabase.co";
 const SUPABASE_KEY = "sb_publishable_0FTC_yZFfch1S10KkDLGqA_pmZTxJMC";
