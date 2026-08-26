@@ -84,7 +84,93 @@
 
 
 <main>
+<section class="account section" id="compte">
 
+    <div class="container">
+
+        <div class="section-header">
+            <div>
+                <p class="eyebrow">MON COMPTE</p>
+                <h2>Connexion</h2>
+            </div>
+        </div>
+
+        <div class="account-box">
+
+            <form id="loginForm">
+
+                <label>
+                    E-mail
+                    <input
+                        type="email"
+                        id="loginEmail"
+                        required>
+                </label>
+
+                <label>
+                    Mot de passe
+                    <input
+                        type="password"
+                        id="loginPassword"
+                        required>
+                </label>
+
+                <button
+                    type="submit"
+                    class="btn btn-brown">
+                    Se connecter
+                </button>
+
+            </form>
+
+
+            <hr>
+
+
+            <form id="signupForm">
+
+                <h3>Créer un compte</h3>
+
+                <label>
+                    E-mail
+                    <input
+                        type="email"
+                        id="signupEmail"
+                        required>
+                </label>
+
+                <label>
+                    Mot de passe
+                    <input
+                        type="password"
+                        id="signupPassword"
+                        minlength="6"
+                        required>
+                </label>
+
+                <button
+                    type="submit"
+                    class="btn btn-brown">
+                    Créer mon compte
+                </button>
+
+            </form>
+
+
+            <button
+                id="logoutButton"
+                class="btn btn-brown"
+                style="display:none;">
+                Se déconnecter
+            </button>
+
+            <p id="accountMessage"></p>
+
+        </div>
+
+    </div>
+
+</section>
 <!-- =====================================================
      HERO
 ===================================================== -->
