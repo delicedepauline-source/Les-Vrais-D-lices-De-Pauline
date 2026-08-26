@@ -20,7 +20,13 @@ console.log("SCRIPT.JS EST BIEN CHARGÉ !");
    PRODUITS
 ===================================================== */
 
-const products = [
+const products = [const SUPABASE_URL = "https://qyysftxupnnfikmrjjue.supabase.co";
+const SUPABASE_ANON_KEY = "TA_CLE_ANON_ICI";
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
 
     {
         id: 1,
