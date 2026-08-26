@@ -5,6 +5,149 @@
 
 console.log("SCRIPT.JS EST BIEN CHARGÉ !");
 
+/* =====================================================
+   COMPTE UTILISATEUR
+===================================================== */
+
+const loginForm = document.getElementById("loginForm");
+const signupForm = document.getElementById("signupForm");
+const logoutButton = document.getElementById("logoutButton");
+const accountMessage = document.getElementById("accountMessage");
+
+
+/* CRÉER UN COMPTE */
+
+if (signupForm) {
+
+    signupForm.addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+        const email =
+            document.getElementById("signupEmail").value;
+
+        const password =
+            document.getElementById("signupPassword").value;
+
+
+        const { data, error } =
+            await supabaseClient.auth.signUp({
+                email: email,
+                password: password
+            });
+
+
+        if (error) {
+
+            accountMessage.textContent =
+                "Erreur : " + error.message;
+
+            return;
+
+        }
+
+
+        accountMessage.textContent =
+            "Compte créé ! Vérifie ton e-mail pour confirmer ton compte. 📧";
+
+        signupForm.reset();
+
+    });
+
+}
+
+
+/* SE CONNECTER */
+
+if (loginForm) {
+
+    loginForm.addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+        const email =
+            document.getElementById("loginEmail").value;
+
+        const password =
+            document.getElementById("loginPassword").value;
+
+
+        const { data, error } =
+            await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+
+        if (error) {
+
+            accountMessage.textContent =
+                "Erreur : " + error.message;
+
+            return;
+
+        }
+
+
+        accountMessage.textContent =
+            "Connexion réussie ! Bienvenue 👋";
+
+        loginForm.reset();
+
+        updateAccount();
+
+    });
+
+}
+
+
+/* SE DÉCONNECTER */
+
+if (logoutButton) {
+
+    logoutButton.addEventListener("click", async () => {
+
+        await supabaseClient.auth.signOut();
+
+        accountMessage.textContent =
+            "Vous êtes déconnecté.";
+
+        updateAccount();
+
+    });
+
+}
+
+
+/* VÉRIFIER LA CONNEXION */
+
+async function updateAccount() {
+
+    const { data } =
+        await supabaseClient.auth.getUser();
+
+
+    if (data.user) {
+
+        loginForm.style.display = "none";
+        signupForm.style.display = "none";
+        logoutButton.style.display = "inline-block";
+
+        accountMessage.textContent =
+            "Connecté avec : " + data.user.email;
+
+    } else {
+
+        loginForm.style.display = "block";
+        signupForm.style.display = "block";
+        logoutButton.style.display = "none";
+
+    }
+
+}
+
+
+updateAccount();
 
 /* =====================================================
    SUPABASE
