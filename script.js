@@ -5,166 +5,6 @@
 
 console.log("SCRIPT.JS EST BIEN CHARGÉ !");
 
-/* =====================================================
-   COMPTE UTILISATEUR
-===================================================== */
-
-const loginForm = document.getElementById("loginForm");
-const signupForm = document.getElementById("signupForm");
-const logoutButton = document.getElementById("logoutButton");
-const accountMessage = document.getElementById("accountMessage");
-
-
-/* CRÉER UN COMPTE */
-
-if (signupForm) {
-
-    signupForm.addEventListener("submit", async (event) => {
-
-        event.preventDefault();
-
-        const email =
-            document.getElementById("signupEmail").value;
-
-        const password =
-            document.getElementById("signupPassword").value;
-
-
-        const { data, error } =
-            await supabaseClient.auth.signUp({
-                email: email,
-                password: password
-            });
-
-
-        if (error) {
-
-            accountMessage.textContent =
-                "Erreur : " + error.message;
-
-            return;
-
-        }
-
-
-        accountMessage.textContent =
-            "Compte créé ! Vérifie ton e-mail pour confirmer ton compte. 📧";
-
-        signupForm.reset();
-
-    });
-
-}
-
-
-/* SE CONNECTER */
-
-if (loginForm) {
-
-    loginForm.addEventListener("submit", async (event) => {
-
-        event.preventDefault();
-
-        const email =
-            document.getElementById("loginEmail").value;
-
-        const password =
-            document.getElementById("loginPassword").value;
-
-
-        const { data, error } =
-            await supabaseClient.auth.signInWithPassword({
-                email: email,
-                password: password
-            });
-
-
-        if (error) {
-
-            accountMessage.textContent =
-                "Erreur : " + error.message;
-
-            return;
-
-        }
-
-
-        accountMessage.textContent =
-            "Connexion réussie ! Bienvenue 👋";
-
-        loginForm.reset();
-
-        updateAccount();
-
-    });
-
-}
-
-
-/* SE DÉCONNECTER */
-
-if (logoutButton) {
-
-    logoutButton.addEventListener("click", async () => {
-
-        await supabaseClient.auth.signOut();
-
-        accountMessage.textContent =
-            "Vous êtes déconnecté.";
-
-        updateAccount();
-
-    });
-
-}
-
-
-/* VÉRIFIER LA CONNEXION */
-
-async function updateAccount() {
-
-    const { data } =
-        await supabaseClient.auth.getUser();
-
-
-    if (data.user) {
-
-        loginForm.style.display = "none";
-        signupForm.style.display = "none";
-        logoutButton.style.display = "inline-block";
-
-        accountMessage.textContent =
-            "Connecté avec : " + data.user.email;
-
-    } else {
-
-        loginForm.style.display = "block";
-        signupForm.style.display = "block";
-        logoutButton.style.display = "none";
-
-    }
-
-}
-
-
-updateAccount();
-
-/* =====================================================
-   SUPABASE
-===================================================== */
-
-const SUPABASE_URL = "https://qyysftxupnnfikmrjjue.supabase.co";
-
-const SUPABASE_KEY =
-    "sb_publishable_0FTC_yZFfch1S10KkDLGqA_pmZTxJMC";
-
-const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
-
-console.log("Supabase connecté !");
-
 
 /* =====================================================
    PRODUITS
@@ -296,11 +136,20 @@ let cart = JSON.parse(
    ELEMENTS HTML
 ===================================================== */
 
-const productsGrid = document.getElementById("productsGrid");
-const cartItems = document.getElementById("cartItems");
-const cartTotal = document.getElementById("cartTotal");
-const cartCount = document.getElementById("cartCount");
-const toast = document.getElementById("toast");
+const productsGrid =
+    document.getElementById("productsGrid");
+
+const cartItems =
+    document.getElementById("cartItems");
+
+const cartTotal =
+    document.getElementById("cartTotal");
+
+const cartCount =
+    document.getElementById("cartCount");
+
+const toast =
+    document.getElementById("toast");
 
 
 /* =====================================================
@@ -323,12 +172,16 @@ function formatPrice(price) {
 
 function showToast(message) {
 
+    if (!toast) return;
+
     toast.textContent = message;
 
     toast.classList.add("show");
 
     setTimeout(() => {
+
         toast.classList.remove("show");
+
     }, 2500);
 
 }
@@ -350,9 +203,9 @@ function saveCart() {
 
 function addToCart(id) {
 
-    const existing = cart.find(
-        item => item.id === id
-    );
+    const existing =
+        cart.find(item => item.id === id);
+
 
     if (existing) {
 
@@ -361,39 +214,51 @@ function addToCart(id) {
     } else {
 
         cart.push({
+
             id: id,
+
             quantity: 1
+
         });
 
     }
 
+
     saveCart();
+
     renderCart();
 
-    showToast("Produit ajouté au panier ✓");
+    showToast(
+        "Produit ajouté au panier ✓"
+    );
 
 }
 
 
 function changeQuantity(id, amount) {
 
-    const item = cart.find(
-        item => item.id === id
-    );
+    const item =
+        cart.find(item => item.id === id);
+
 
     if (!item) return;
 
+
     item.quantity += amount;
+
 
     if (item.quantity <= 0) {
 
-        cart = cart.filter(
-            item => item.id !== id
-        );
+        cart =
+            cart.filter(
+                item => item.id !== id
+            );
 
     }
 
+
     saveCart();
+
     renderCart();
 
 }
@@ -401,11 +266,14 @@ function changeQuantity(id, amount) {
 
 function removeFromCart(id) {
 
-    cart = cart.filter(
-        item => item.id !== id
-    );
+    cart =
+        cart.filter(
+            item => item.id !== id
+        );
+
 
     saveCart();
+
     renderCart();
 
 }
@@ -417,12 +285,17 @@ function removeFromCart(id) {
 
 function renderProducts(filter = "all") {
 
+    if (!productsGrid) return;
+
+
     const filteredProducts =
         filter === "all"
             ? products
             : products.filter(
-                product => product.category === filter
+                product =>
+                    product.category === filter
             );
+
 
     productsGrid.innerHTML =
         filteredProducts.map(product => `
@@ -436,9 +309,13 @@ function renderProducts(filter = "all") {
 
                 <div class="product-info">
 
-                    <h3>${product.name}</h3>
+                    <h3>
+                        ${product.name}
+                    </h3>
 
-                    <p>${product.description}</p>
+                    <p>
+                        ${product.description}
+                    </p>
 
                     <div class="product-bottom">
 
@@ -460,6 +337,7 @@ function renderProducts(filter = "all") {
 
         `).join("");
 
+
     document
         .querySelectorAll("[data-add]")
         .forEach(button => {
@@ -469,7 +347,9 @@ function renderProducts(filter = "all") {
                 () => {
 
                     addToCart(
-                        Number(button.dataset.add)
+                        Number(
+                            button.dataset.add
+                        )
                     );
 
                 }
@@ -486,12 +366,19 @@ function renderProducts(filter = "all") {
 
 function renderCart() {
 
+    if (!cartItems) return;
+
+
     if (cart.length === 0) {
 
         cartItems.innerHTML = `
+
             <div class="empty-cart">
+
                 Votre panier est vide.
+
             </div>
+
         `;
 
     } else {
@@ -504,7 +391,9 @@ function renderCart() {
                         p => p.id === item.id
                     );
 
+
                 if (!product) return "";
+
 
                 return `
 
@@ -519,9 +408,13 @@ function renderCart() {
                             <div class="cart-meta">
 
                                 ${formatPrice(product.price)}
+
                                 ×
+
                                 ${item.quantity}
+
                                 =
+
                                 ${formatPrice(
                                     product.price *
                                     item.quantity
@@ -531,6 +424,7 @@ function renderCart() {
 
                         </div>
 
+
                         <div class="quantity">
 
                             <button
@@ -538,14 +432,17 @@ function renderCart() {
                                 −
                             </button>
 
+
                             <span>
                                 ${item.quantity}
                             </span>
+
 
                             <button
                                 data-plus="${product.id}">
                                 +
                             </button>
+
 
                             <button
                                 class="remove-button"
@@ -565,7 +462,9 @@ function renderCart() {
 
 
     let total = 0;
+
     let quantity = 0;
+
 
     cart.forEach(item => {
 
@@ -574,11 +473,14 @@ function renderCart() {
                 p => p.id === item.id
             );
 
+
         if (!product) return;
+
 
         total +=
             product.price *
             item.quantity;
+
 
         quantity +=
             item.quantity;
@@ -586,11 +488,20 @@ function renderCart() {
     });
 
 
-    cartTotal.textContent =
-        formatPrice(total);
+    if (cartTotal) {
 
-    cartCount.textContent =
-        quantity;
+        cartTotal.textContent =
+            formatPrice(total);
+
+    }
+
+
+    if (cartCount) {
+
+        cartCount.textContent =
+            quantity;
+
+    }
 
 
     document
@@ -600,7 +511,9 @@ function renderCart() {
             button.onclick = () => {
 
                 changeQuantity(
-                    Number(button.dataset.minus),
+                    Number(
+                        button.dataset.minus
+                    ),
                     -1
                 );
 
@@ -616,7 +529,9 @@ function renderCart() {
             button.onclick = () => {
 
                 changeQuantity(
-                    Number(button.dataset.plus),
+                    Number(
+                        button.dataset.plus
+                    ),
                     1
                 );
 
@@ -632,7 +547,9 @@ function renderCart() {
             button.onclick = () => {
 
                 removeFromCart(
-                    Number(button.dataset.remove)
+                    Number(
+                        button.dataset.remove
+                    )
                 );
 
             };
@@ -656,11 +573,19 @@ document
 
                 document
                     .querySelectorAll(".filter")
-                    .forEach(btn =>
-                        btn.classList.remove("active")
-                    );
+                    .forEach(btn => {
 
-                button.classList.add("active");
+                        btn.classList.remove(
+                            "active"
+                        );
+
+                    });
+
+
+                button.classList.add(
+                    "active"
+                );
+
 
                 renderProducts(
                     button.dataset.filter
@@ -677,10 +602,16 @@ document
 ===================================================== */
 
 const menuToggle =
-    document.getElementById("menuToggle");
+    document.getElementById(
+        "menuToggle"
+    );
+
 
 const navLinks =
-    document.getElementById("navLinks");
+    document.getElementById(
+        "navLinks"
+    );
+
 
 if (menuToggle && navLinks) {
 
@@ -688,20 +619,27 @@ if (menuToggle && navLinks) {
         "click",
         () => {
 
-            navLinks.classList.toggle("open");
+            navLinks.classList.toggle(
+                "open"
+            );
 
         }
     );
 
+
     document
-        .querySelectorAll(".nav-links a")
+        .querySelectorAll(
+            ".nav-links a"
+        )
         .forEach(link => {
 
             link.addEventListener(
                 "click",
                 () => {
 
-                    navLinks.classList.remove("open");
+                    navLinks.classList.remove(
+                        "open"
+                    );
 
                 }
             );
@@ -716,13 +654,21 @@ if (menuToggle && navLinks) {
 ===================================================== */
 
 const lightbox =
-    document.getElementById("lightbox");
+    document.getElementById(
+        "lightbox"
+    );
+
 
 const lightboxImage =
-    document.getElementById("lightboxImage");
+    document.getElementById(
+        "lightboxImage"
+    );
+
 
 const closeLightbox =
-    document.getElementById("closeLightbox");
+    document.getElementById(
+        "closeLightbox"
+    );
 
 
 document
@@ -734,15 +680,26 @@ document
             () => {
 
                 const image =
-                    button.querySelector("img");
+                    button.querySelector(
+                        "img"
+                    );
+
+
+                if (!image || !lightbox || !lightboxImage)
+                    return;
+
 
                 lightboxImage.src =
                     image.src;
 
+
                 lightboxImage.alt =
                     image.alt;
 
-                lightbox.classList.add("open");
+
+                lightbox.classList.add(
+                    "open"
+                );
 
             }
         );
@@ -756,7 +713,13 @@ if (closeLightbox) {
         "click",
         () => {
 
-            lightbox.classList.remove("open");
+            if (lightbox) {
+
+                lightbox.classList.remove(
+                    "open"
+                );
+
+            }
 
         }
     );
@@ -770,9 +733,14 @@ if (lightbox) {
         "click",
         event => {
 
-            if (event.target === lightbox) {
+            if (
+                event.target ===
+                lightbox
+            ) {
 
-                lightbox.classList.remove("open");
+                lightbox.classList.remove(
+                    "open"
+                );
 
             }
 
@@ -787,7 +755,10 @@ if (lightbox) {
 ===================================================== */
 
 const orderForm =
-    document.getElementById("orderForm");
+    document.getElementById(
+        "orderForm"
+    );
+
 
 if (orderForm) {
 
@@ -796,6 +767,7 @@ if (orderForm) {
         async event => {
 
             event.preventDefault();
+
 
             if (cart.length === 0) {
 
@@ -809,42 +781,69 @@ if (orderForm) {
 
 
             const formData =
-                new FormData(orderForm);
+                new FormData(
+                    orderForm
+                );
+
 
             const order = {
 
                 prenom:
-                    formData.get("prenom"),
+                    formData.get(
+                        "prenom"
+                    ),
 
                 nom:
-                    formData.get("nom"),
+                    formData.get(
+                        "nom"
+                    ),
 
                 telephone:
-                    formData.get("telephone"),
+                    formData.get(
+                        "telephone"
+                    ),
 
                 email:
-                    formData.get("email"),
+                    formData.get(
+                        "email"
+                    ),
 
                 date_retrait:
-                    formData.get("date"),
+                    formData.get(
+                        "date"
+                    ),
 
                 heure_retrait:
-                    formData.get("heure"),
+                    formData.get(
+                        "heure"
+                    ),
 
                 commentaire:
-                    formData.get("commentaire"),
+                    formData.get(
+                        "commentaire"
+                    ),
 
                 produits:
                     cart,
 
                 total:
                     cart.reduce(
-                        (total, item) => {
+                        (
+                            total,
+                            item
+                        ) => {
 
                             const product =
                                 products.find(
-                                    p => p.id === item.id
+                                    p =>
+                                        p.id ===
+                                        item.id
                                 );
+
+
+                            if (!product)
+                                return total;
+
 
                             return total +
                                 (
@@ -860,7 +859,7 @@ if (orderForm) {
 
 
             console.log(
-                "Commande prête pour Supabase :",
+                "Commande prête :",
                 order
             );
 
@@ -880,7 +879,10 @@ if (orderForm) {
 ===================================================== */
 
 const customForm =
-    document.getElementById("customForm");
+    document.getElementById(
+        "customForm"
+    );
+
 
 if (customForm) {
 
@@ -890,9 +892,11 @@ if (customForm) {
 
             event.preventDefault();
 
+
             showToast(
                 "Demande personnalisée envoyée ✓"
             );
+
 
             customForm.reset();
 
@@ -907,7 +911,10 @@ if (customForm) {
 ===================================================== */
 
 const contactForm =
-    document.getElementById("contactForm");
+    document.getElementById(
+        "contactForm"
+    );
+
 
 if (contactForm) {
 
@@ -917,9 +924,11 @@ if (contactForm) {
 
             event.preventDefault();
 
+
             showToast(
                 "Message envoyé ✓"
             );
+
 
             contactForm.reset();
 
@@ -934,7 +943,10 @@ if (contactForm) {
 ===================================================== */
 
 const year =
-    document.getElementById("year");
+    document.getElementById(
+        "year"
+    );
+
 
 if (year) {
 
@@ -949,6 +961,10 @@ if (year) {
 ===================================================== */
 
 renderProducts();
+
 renderCart();
 
-console.log("TEST SCRIPT.JS OK");
+
+console.log(
+    "TEST SCRIPT.JS OK"
+);
