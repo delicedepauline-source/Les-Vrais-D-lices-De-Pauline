@@ -3,60 +3,64 @@
 LES DÉLICES DE PAULINE
 SYSTÈME DE COMPTES
 =========================================================
-
-IMPORTANT :
-
-Quand ton projet Supabase sera créé, tu remplaceras :
-
-SUPABASE_URL
-SUPABASE_ANON_KEY
-
-par les informations fournies par Supabase.
-
-NE METS JAMAIS ta clé "service_role" ici.
-=========================================================
 */
-
 
 // =======================================================
 // CONFIGURATION SUPABASE
 // =======================================================
 
 const SUPABASE_URL = "TON_URL_SUPABASE";
-
 const SUPABASE_ANON_KEY = "TA_CLE_PUBLIQUE_SUPABASE";
+
+
+// =======================================================
+// CLIENT SUPABASE
+// =======================================================
+
+let supabaseClient = null;
 
 
 // =======================================================
 // CHARGEMENT DE SUPABASE
 // =======================================================
 
-let supabaseClient = null;
-
-
-/*
-On charge automatiquement la bibliothèque Supabase.
-*/
-
 const supabaseScript = document.createElement("script");
 
 supabaseScript.src =
     "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
 
-supabaseScript.onload = () => {
+supabaseScript.onload = async () => {
 
-    supabaseClient =
-    window.supabase.createClient(
+    console.log("Supabase chargé");
+
+    supabaseClient = window.supabase.createClient(
         SUPABASE_URL,
         SUPABASE_ANON_KEY,
         {
             auth: {
                 persistSession: true,
                 autoRefreshToken: true,
-                detectSessionInUrl: true
+                detectSessionInUrl: true,
+                storage: window.localStorage
             }
         }
     );
+
+    console.log("Client Supabase créé");
+
+    // On attend que le DOM soit chargé
+    if (document.readyState === "loading") {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            initializeAuth
+        );
+
+    } else {
+
+        initializeAuth();
+
+    }
 
 };
 
@@ -65,7 +69,19 @@ supabaseScript.onload = () => {
 // INITIALISATION
 // =======================================================
 
-function initializeAuth() {
+async function initializeAuth() {
+
+    if (!supabaseClient) {
+
+        console.error(
+            "Supabase n'est pas encore chargé."
+        );
+
+        return;
+
+    }
+
+    console.log("Initialisation du système de comptes");
 
     setupRegister();
 
@@ -73,7 +89,9 @@ function initializeAuth() {
 
     setupLogout();
 
-    loadAccount();
+    await loadAccount();
+
+    updateNavigation();
 
 }
 
@@ -88,6 +106,11 @@ function setupRegister() {
         document.getElementById("registerForm");
 
     if (!form) return;
+
+    // Évite de créer plusieurs événements
+    if (form.dataset.initialized === "true") return;
+
+    form.dataset.initialized = "true";
 
 
     form.addEventListener("submit", async (event) => {
@@ -133,6 +156,9 @@ function setupRegister() {
         message.textContent =
             "Création de votre compte...";
 
+        message.className =
+            "form-message";
+
 
         const { data, error } =
             await supabaseClient.auth.signUp({
@@ -160,6 +186,8 @@ function setupRegister() {
 
         if (error) {
 
+            console.error(error);
+
             message.textContent =
                 error.message;
 
@@ -172,18 +200,24 @@ function setupRegister() {
 
 
         message.textContent =
-            "Votre compte a été créé ! Vous pouvez maintenant vous connecter.";
+            "Votre compte a été créé !";
 
         message.className =
             "form-message success";
 
+
+        /*
+        Si Supabase demande une confirmation
+        par e-mail, l'utilisateur devra confirmer
+        son adresse avant de pouvoir se connecter.
+        */
 
         setTimeout(() => {
 
             window.location.href =
                 "connexion.html";
 
-        }, 2000);
+        }, 1500);
 
     });
 
@@ -200,6 +234,10 @@ function setupLogin() {
         document.getElementById("loginForm");
 
     if (!form) return;
+
+    if (form.dataset.initialized === "true") return;
+
+    form.dataset.initialized = "true";
 
 
     form.addEventListener("submit", async (event) => {
@@ -220,6 +258,9 @@ function setupLogin() {
         message.textContent =
             "Connexion...";
 
+        message.className =
+            "form-message";
+
 
         const { data, error } =
             await supabaseClient.auth.signInWithPassword({
@@ -233,6 +274,8 @@ function setupLogin() {
 
         if (error) {
 
+            console.error(error);
+
             message.textContent =
                 "Adresse e-mail ou mot de passe incorrect.";
 
@@ -244,6 +287,12 @@ function setupLogin() {
         }
 
 
+        console.log(
+            "Connexion réussie :",
+            data.user.email
+        );
+
+
         message.textContent =
             "Connexion réussie !";
 
@@ -252,8 +301,8 @@ function setupLogin() {
 
 
         /*
-        Pour l'instant on redirige vers le compte client.
-        L'espace admin sera protégé dans admin.js.
+        La session est maintenant automatiquement
+        sauvegardée dans le localStorage.
         */
 
         setTimeout(() => {
@@ -261,7 +310,7 @@ function setupLogin() {
             window.location.href =
                 "compte.html";
 
-        }, 700);
+        }, 500);
 
     });
 
@@ -287,10 +336,37 @@ function setupLogout() {
 
         if (!button) return;
 
+        if (button.dataset.initialized === "true") return;
+
+        button.dataset.initialized = "true";
+
 
         button.addEventListener("click", async () => {
 
-            await supabaseClient.auth.signOut();
+            console.log("Déconnexion...");
+
+
+            const { error } =
+                await supabaseClient.auth.signOut();
+
+
+            if (error) {
+
+                console.error(
+                    "Erreur de déconnexion :",
+                    error
+                );
+
+                return;
+
+            }
+
+
+            // Nettoyage de la session locale
+            localStorage.removeItem(
+                "supabase.auth.token"
+            );
+
 
             window.location.href =
                 "index.html";
@@ -303,25 +379,41 @@ function setupLogout() {
 
 
 // =======================================================
-// COMPTE CLIENT
+// CHARGEMENT DU COMPTE
 // =======================================================
 
 async function loadAccount() {
 
-    if (!document.getElementById("userEmail"))
+    const userEmailElement =
+        document.getElementById("userEmail");
+
+
+    // Si ce n'est pas la page compte
+    if (!userEmailElement)
         return;
 
 
+    console.log("Recherche de la session...");
+
+
+    /*
+    IMPORTANT :
+    getSession() récupère la session sauvegardée
+    après un F5.
+    */
+
     const {
-
-        data: { user },
-
+        data: { session },
         error
+    } = await supabaseClient.auth.getSession();
 
-    } = await supabaseClient.auth.getUser();
 
+    if (error) {
 
-    if (error || !user) {
+        console.error(
+            "Erreur récupération session :",
+            error
+        );
 
         window.location.href =
             "connexion.html";
@@ -329,6 +421,30 @@ async function loadAccount() {
         return;
 
     }
+
+
+    if (!session || !session.user) {
+
+        console.log(
+            "Aucune session trouvée."
+        );
+
+        window.location.href =
+            "connexion.html";
+
+        return;
+
+    }
+
+
+    const user =
+        session.user;
+
+
+    console.log(
+        "Session retrouvée :",
+        user.email
+    );
 
 
     const metadata =
@@ -345,23 +461,150 @@ async function loadAccount() {
         metadata.telephone || "Non renseigné";
 
 
-    document.getElementById("userFirstName")
-        .textContent = prenom || "client";
+    const firstNameElement =
+        document.getElementById("userFirstName");
+
+    const fullNameElement =
+        document.getElementById("userFullName");
+
+    const phoneElement =
+        document.getElementById("userPhone");
 
 
-    document.getElementById("userFullName")
-        .textContent =
+    if (firstNameElement) {
+
+        firstNameElement.textContent =
+            prenom || "client";
+
+    }
+
+
+    if (fullNameElement) {
+
+        fullNameElement.textContent =
             `${prenom} ${nom}`.trim();
 
-
-    document.getElementById("userEmail")
-        .textContent =
-            user.email;
+    }
 
 
-    document.getElementById("userPhone")
-        .textContent =
+    userEmailElement.textContent =
+        user.email;
+
+
+    if (phoneElement) {
+
+        phoneElement.textContent =
             telephone;
+
+    }
+
+}
+
+
+// =======================================================
+// NAVIGATION
+// =======================================================
+
+async function updateNavigation() {
+
+    if (!supabaseClient)
+        return;
+
+
+    const {
+        data: { session }
+    } = await supabaseClient.auth.getSession();
+
+
+    const loginLinks =
+        document.querySelectorAll(
+            '[href="connexion.html"]'
+        );
+
+
+    const accountLinks =
+        document.querySelectorAll(
+            '[href="compte.html"]'
+        );
+
+
+    if (session) {
+
+        console.log(
+            "Utilisateur connecté :",
+            session.user.email
+        );
+
+
+        loginLinks.forEach(link => {
+
+            link.style.display = "none";
+
+        });
+
+
+        accountLinks.forEach(link => {
+
+            link.style.display = "";
+
+        });
+
+    } else {
+
+        loginLinks.forEach(link => {
+
+            link.style.display = "";
+
+        });
+
+
+        accountLinks.forEach(link => {
+
+            link.style.display = "none";
+
+        });
+
+    }
+
+}
+
+
+// =======================================================
+// SURVEILLANCE DE LA SESSION
+// =======================================================
+
+function setupAuthListener() {
+
+    if (!supabaseClient)
+        return;
+
+
+    supabaseClient.auth.onAuthStateChange(
+        (event, session) => {
+
+            console.log(
+                "Événement auth :",
+                event
+            );
+
+
+            if (session) {
+
+                console.log(
+                    "Session active :",
+                    session.user.email
+                );
+
+            } else {
+
+                console.log(
+                    "Aucune session active"
+                );
+
+            }
+
+        }
+    );
 
 }
 
