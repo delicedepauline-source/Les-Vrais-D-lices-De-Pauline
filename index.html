@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+          content="Les Délices De Pauline - Boulangerie et pâtisserie artisanale à Saint-Priest.">
+
+    <title>Les Délices De Pauline | Boulangerie & Pâtisserie</title>
+
+    <!-- Polices Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- =====================================================
+     BARRE SUPÉRIEURE
+===================================================== -->
+
+<div class="topbar">
+    Saint-Priest · Boulangerie & pâtisserie artisanale
+</div>
+
+
+<!-- =====================================================
+     NAVIGATION
+===================================================== -->
+
+<header class="header">
+
+    <nav class="navbar">
+
+        <a href="#accueil" class="logo">
+
+            <span class="logo-circle">LDP</span>
+
+            <span class="logo-text">
+                <strong>Les Délices</strong>
+                <small>De Pauline</small>
+            </span>
+
+        </a>
+
+        <button class="menu-toggle" id="menuToggle">
+            ☰
+        </button>
+
+        <div class="nav-links" id="navLinks">
+
+            <a href="#accueil">Accueil</a>
+            <a href="#produits">Nos produits</a>
+            <a href="#apropos">À propos</a>
+            <a href="#commande">Commande</a>
+            <a href="#personnalise">Personnalisé</a>
+            <a href="#galerie">Galerie</a>
+            <a href="#contact">Contact</a>
+
+        </div>
+
+        <a href="#commande" class="cart-button">
+
+            🛒 Panier
+
+            <span id="cartCount">0</span>
+
+        </a>
+
+    </nav>
+
+</header>
+
+
+<main>
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<section class="hero" id="accueil">
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+
+        <p class="eyebrow">
+            BOULANGERIE · PÂTISSERIE · SAINT-PRIEST
+        </p>
+
+        <h1>
+            Le goût des belles choses,
+            <em>faites avec passion.</em>
+        </h1>
+
+        <p>
+            Des créations gourmandes, généreuses et artisanales
+            pour accompagner vos petits plaisirs et vos grands moments.
+        </p>
+
+        <div class="hero-buttons">
+
+            <a href="#produits" class="btn btn-gold">
+                Découvrir nos produits
+            </a>
+
+            <a href="#commande" class="btn btn-white">
+                Commander maintenant
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     INTRODUCTION
+===================================================== -->
+
+<section class="intro section">
+
+    <div class="container intro-grid">
+
+        <div>
+
+            <p class="eyebrow">
+                NOTRE MAISON
+            </p>
+
+            <h2>
+                Une boulangerie où l'on vient
+                pour le goût…
+            </h2>
+
+        </div>
+
+        <div>
+
+            <p>
+                Les Délices De Pauline vous accueille dans un univers
+                chaleureux inspiré de la tradition française.
+            </p>
+
+            <p>
+                Pâtisseries, sandwichs et boissons sont proposés
+                pour accompagner chaque moment de la journée.
+            </p>
+
+            <a href="#apropos" class="text-link">
+                Découvrir notre histoire →
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     PRODUITS
+===================================================== -->
+
+<section class="products section" id="produits">
+
+    <div class="container">
+
+        <div class="section-header">
+
+            <div>
+
+                <p class="eyebrow">
+                    LA CARTE
+                </p>
+
+                <h2>
+                    Nos gourmandises
+                </h2>
+
+            </div>
+
+            <p>
+                Retrouvez nos produits et ajoutez directement
+                vos préférés au panier.
+            </p>
+
+        </div>
+
+
+        <!-- FILTRES -->
+
+        <div class="filters">
+
+            <button class="filter active" data-filter="all">
+                Tout
+            </button>
+
+            <button class="filter" data-filter="patisseries">
+                Pâtisseries
+            </button>
+
+            <button class="filter" data-filter="sandwichs">
+                Sandwichs
+            </button>
+
+            <button class="filter" data-filter="boissons">
+                Boissons
+            </button>
+
+        </div>
+
+
+        <!-- PRODUITS GÉNÉRÉS PAR JAVASCRIPT -->
+
+        <div class="products-grid" id="productsGrid"></div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     SAVOIR-FAIRE
+===================================================== -->
+
+<section class="quality section">
+
+    <div class="container quality-grid">
+
+        <div class="quality-image">
+
+            <!--
+            IMAGE À REMPLACER :
+
+            Remplacez cette URL par votre propre photo.
+            -->
+
+            <img
+                src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1200&q=85"
+                alt="Pain artisanal">
+
+        </div>
+
+
+        <div class="quality-content">
+
+            <p class="eyebrow">
+                NOTRE SAVOIR-FAIRE
+            </p>
+
+            <h2>
+                Le plaisir commence
+                par de bons produits.
+            </h2>
+
+            <p>
+                Nous croyons aux recettes bien pensées,
+                aux textures généreuses et aux détails
+                qui font la différence.
+            </p>
+
+            <div class="values">
+
+                <div>
+                    <span>01</span>
+
+                    <div>
+                        <strong>Gourmandise</strong>
+                        <p>
+                            Des recettes pensées pour faire plaisir.
+                        </p>
+                    </div>
+                </div>
+
+                <div>
+                    <span>02</span>
+
+                    <div>
+                        <strong>Qualité</strong>
+                        <p>
+                            Une attention particulière portée aux ingrédients.
+                        </p>
+                    </div>
+                </div>
+
+                <div>
+                    <span>03</span>
+
+                    <div>
+                        <strong>Proximité</strong>
+                        <p>
+                            Une maison chaleureuse à taille humaine.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     À PROPOS
+===================================================== -->
+
+<section class="about section" id="apropos">
+
+    <div class="container about-grid">
+
+        <div>
+
+            <p class="eyebrow">
+                À PROPOS
+            </p>
+
+            <h2>
+                Bienvenue chez
+                Les Délices De Pauline.
+            </h2>
+
+            <!--
+            TEXTE À MODIFIER :
+
+            Remplacez ces paragraphes par votre véritable histoire.
+            -->
+
+            <p>
+                Les Délices De Pauline est une maison gourmande
+                imaginée autour d'une idée simple :
+                proposer de bons produits dans une ambiance
+                sincère, conviviale et chaleureuse.
+            </p>
+
+            <p>
+                Du petit plaisir du matin aux gâteaux des grandes
+                occasions, nous souhaitons créer une expérience
+                généreuse et accessible.
+            </p>
+
+        </div>
+
+
+        <div class="about-card">
+
+            <span>LDP</span>
+
+            <p>
+                « Une maison où chaque gourmandise
+                raconte une petite histoire. »
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     COMMANDE / PANIER
+===================================================== -->
+
+<section class="order section" id="commande">
+
+    <div class="container">
+
+        <div class="section-header">
+
+            <div>
+
+                <p class="eyebrow">
+                    COMMANDE
+                </p>
+
+                <h2>
+                    Votre commande
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="order-grid">
+
+
+            <!-- PANIER -->
+
+            <div class="cart-box">
+
+                <h3>
+                    Mon panier
+                </h3>
+
+                <div id="cartItems">
+
+                    <div class="empty-cart">
+                        Votre panier est vide.
+                    </div>
+
+                </div>
+
+
+                <div class="cart-total">
+
+                    <span>
+                        Total
+                    </span>
+
+                    <strong id="cartTotal">
+                        0,00 €
+                    </strong>
+
+                </div>
+
+                <div class="payment-note">
+                    ✓ Paiement lors du retrait de votre commande.
+                </div>
+
+            </div>
+
+
+            <!-- FORMULAIRE -->
+
+            <form class="form-box" id="orderForm">
+
+                <h3>
+                    Informations de retrait
+                </h3>
+
+                <div class="form-grid">
+
+                    <label>
+                        Prénom
+                        <input
+                            type="text"
+                            name="prenom"
+                            required>
+                    </label>
+
+                    <label>
+                        Nom
+                        <input
+                            type="text"
+                            name="nom"
+                            required>
+                    </label>
+
+                    <label>
+                        Téléphone
+                        <input
+                            type="tel"
+                            name="telephone"
+                            required>
+                    </label>
+
+                    <label>
+                        E-mail
+                        <input
+                            type="email"
+                            name="email"
+                            required>
+                    </label>
+
+                    <label>
+                        Date de retrait
+                        <input
+                            type="date"
+                            name="date"
+                            required>
+                    </label>
+
+                    <label>
+                        Heure
+                        <input
+                            type="time"
+                            name="heure"
+                            required>
+                    </label>
+
+                    <label class="full">
+
+                        Commentaire
+
+                        <textarea
+                            name="commentaire"
+                            rows="5"
+                            placeholder="Une précision pour votre commande ?">
+                        </textarea>
+
+                    </label>
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn btn-brown full">
+
+                    Valider ma commande
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     COMMANDE PERSONNALISÉE
+===================================================== -->
+
+<section class="personalized section" id="personnalise">
+
+    <div class="container personalized-grid">
+
+        <div>
+
+            <p class="eyebrow">
+                SUR MESURE
+            </p>
+
+            <h2>
+                Une occasion spéciale ?
+            </h2>
+
+            <p>
+                Gâteau d'anniversaire, événement,
+                grande commande ou demande particulière :
+                décrivez-nous votre projet.
+            </p>
+
+        </div>
+
+
+        <form class="form-box" id="customForm">
+
+            <div class="form-grid">
+
+                <label>
+                    Nom
+                    <input name="nom" required>
+                </label>
+
+                <label>
+                    Téléphone
+                    <input name="telephone" required>
+                </label>
+
+                <label>
+                    E-mail
+                    <input name="email" type="email" required>
+                </label>
+
+                <label>
+                    Type de demande
+
+                    <select name="type">
+
+                        <option>
+                            Gâteau d'anniversaire
+                        </option>
+
+                        <option>
+                            Événement
+                        </option>
+
+                        <option>
+                            Grande commande
+                        </option>
+
+                        <option>
+                            Demande spéciale
+                        </option>
+
+                    </select>
+
+                </label>
+
+                <label>
+                    Nombre de personnes
+                    <input
+                        name="personnes"
+                        type="number"
+                        min="1">
+                </label>
+
+                <label>
+                    Date souhaitée
+                    <input
+                        name="date"
+                        type="date">
+                </label>
+
+                <label>
+                    Budget approximatif
+                    <input
+                        name="budget"
+                        placeholder="Ex. 60 €">
+                </label>
+
+                <label class="full">
+
+                    Description
+
+                    <textarea
+                        name="description"
+                        rows="6"
+                        required
+                        placeholder="Décrivez votre projet...">
+                    </textarea>
+
+                </label>
+
+            </div>
+
+            <button class="btn btn-brown full">
+                Envoyer ma demande
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     GALERIE
+===================================================== -->
+
+<section class="gallery section" id="galerie">
+
+    <div class="container">
+
+        <div class="section-header">
+
+            <div>
+
+                <p class="eyebrow">
+                    GALERIE
+                </p>
+
+                <h2>
+                    Notre univers
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <!--
+        IMAGES À REMPLACER :
+        Remplacez les URL des images par vos propres photos.
+        -->
+
+        <div class="gallery-grid">
+
+            <button class="gallery-image">
+                <img
+                    src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=1000&q=85"
+                    alt="Gâteau">
+            </button>
+
+            <button class="gallery-image">
+                <img
+                    src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=1000&q=85"
+                    alt="Pain">
+            </button>
+
+            <button class="gallery-image">
+                <img
+                    src="https://images.unsplash.com/photo-1486427944299-d1955d23e34d?auto=format&fit=crop&w=1000&q=85"
+                    alt="Pâtisserie">
+            </button>
+
+            <button class="gallery-image">
+                <img
+                    src="https://images.unsplash.com/photo-1519869325930-281384150729?auto=format&fit=crop&w=1000&q=85"
+                    alt="Desserts">
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     LIGHTBOX
+===================================================== -->
+
+<div class="lightbox" id="lightbox">
+
+    <button id="closeLightbox">
+        ×
+    </button>
+
+    <img id="lightboxImage" src="" alt="">
+
+</div>
+
+
+<!-- =====================================================
+     CONTACT
+===================================================== -->
+
+<section class="contact section" id="contact">
+
+    <div class="container contact-grid">
+
+        <div>
+
+            <p class="eyebrow">
+                NOUS TROUVER
+            </p>
+
+            <h2>
+                Venez nous rendre visite.
+            </h2>
+
+
+            <!--
+            INFORMATIONS À MODIFIER :
+
+            Adresse
+            Téléphone
+            Email
+            Horaires
+            -->
+
+            <div class="contact-info">
+
+                <div>
+                    <strong>Adresse</strong>
+
+                    <p>
+                        12 rue de la Gourmandise<br>
+                        69800 Saint-Priest
+
+                        <small>
+                            Adresse temporaire
+                        </small>
+                    </p>
+                </div>
+
+
+                <div>
+                    <strong>Téléphone</strong>
+
+                    <p>
+                        04 00 00 00 00
+
+                        <small>
+                            Numéro temporaire
+                        </small>
+                    </p>
+                </div>
+
+
+                <div>
+                    <strong>E-mail</strong>
+
+                    <p>
+                        bonjour@lesdelicesdepauline.fr
+                    </p>
+                </div>
+
+
+                <div>
+                    <strong>Horaires</strong>
+
+                    <p>
+                        Lundi – Samedi : 7h00 – 19h00<br>
+                        Dimanche : fermé
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="map">
+                📍 Carte de la boutique
+                <small>
+                    Carte Google Maps / OpenStreetMap à intégrer ici
+                </small>
+            </div>
+
+        </div>
+
+
+        <form class="form-box" id="contactForm">
+
+            <h3>
+                Contactez-nous
+            </h3>
+
+            <label>
+                Nom
+                <input name="nom" required>
+            </label>
+
+            <label>
+                E-mail
+                <input
+                    name="email"
+                    type="email"
+                    required>
+            </label>
+
+            <label>
+                Sujet
+                <input name="sujet" required>
+            </label>
+
+            <label>
+                Message
+
+                <textarea
+                    name="message"
+                    rows="7"
+                    required>
+                </textarea>
+
+            </label>
+
+            <button class="btn btn-brown">
+                Envoyer
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     CTA
+===================================================== -->
+
+<section class="cta">
+
+    <div class="container cta-content">
+
+        <div>
+
+            <p class="eyebrow">
+                UNE PETITE FAIM ?
+            </p>
+
+            <h2>
+                Il est temps de se faire plaisir.
+            </h2>
+
+        </div>
+
+        <a href="#produits" class="btn btn-white">
+            Commander maintenant
+        </a>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer>
+
+    <div class="container footer-grid">
+
+        <div>
+
+            <a href="#accueil" class="logo footer-logo">
+
+                <span class="logo-circle">
+                    LDP
+                </span>
+
+                <span class="logo-text">
+                    <strong>Les Délices</strong>
+                    <small>De Pauline</small>
+                </span>
+
+            </a>
+
+            <p>
+                Une maison gourmande et chaleureuse
+                à Saint-Priest.
+            </p>
+
+        </div>
+
+
+        <div>
+
+            <h4>
+                Navigation
+            </h4>
+
+            <a href="#produits">
+                Nos produits
+            </a>
+
+            <a href="#apropos">
+                À propos
+            </a>
+
+            <a href="#commande">
+                Commande
+            </a>
+
+            <a href="#contact">
+                Contact
+            </a>
+
+        </div>
+
+
+        <div>
+
+            <h4>
+                Réseaux sociaux
+            </h4>
+
+            <!--
+            RÉSEAUX SOCIAUX :
+
+            Remplacez les "#" par vos vrais liens.
+            -->
+
+            <div class="socials">
+
+                <a href="#" target="_blank">
+                    Instagram
+                </a>
+
+                <a href="#" target="_blank">
+                    TikTok
+                </a>
+
+                <a href="#" target="_blank">
+                    Facebook
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+        © <span id="year"></span>
+        Les Délices De Pauline
+
+    </div>
+
+</footer>
+
+
+<div class="toast" id="toast"></div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
