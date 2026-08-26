@@ -1,0 +1,799 @@
+/* =====================================================
+   LES DÉLICES DE PAULINE
+   JAVASCRIPT
+
+   IMPORTANT :
+
+   C'est ici que tu peux modifier facilement :
+
+   - les produits
+   - les prix
+   - les descriptions
+   - les images
+   - les catégories
+
+===================================================== */
+
+
+/* =====================================================
+   PRODUITS
+===================================================== */
+
+const products = [
+
+    {
+        id: 1,
+        name: "Tartelette citron",
+        category: "patisseries",
+        price: 4.20,
+        description: "Une tartelette fraîche et délicatement acidulée.",
+        image: "https://images.unsplash.com/photo-1464305795204-6f5bbfc7fb81?auto=format&fit=crop&w=900&q=85"
+    },
+
+    {
+        id: 2,
+        name: "Éclair chocolat",
+        category: "patisseries",
+        price: 4.50,
+        description: "Un grand classique tout en gourmandise.",
+        image: "https://images.unsplash.com/photo-1614707267537-2b3a7e7f0e3b?auto=format&fit=crop&w=900&q=85"
+    },
+
+    {
+        id: 3,
+        name: "Fraisier",
+        category: "patisseries",
+        price: 5.90,
+        description: "Crème légère, fraises et biscuit moelleux.",
+        image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=900&q=85"
+    },
+
+    {
+        id: 4,
+        name: "Cookie maison",
+        category: "patisseries",
+        price: 2.80,
+        description: "Croustillant à l'extérieur et fondant à l'intérieur.",
+        image: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=900&q=85"
+    },
+
+    {
+        id: 5,
+        name: "Jambon emmental",
+        category: "sandwichs",
+        price: 5.90,
+        description: "Pain frais, jambon et emmental fondant.",
+        image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=900&q=85"
+    },
+
+    {
+        id: 6,
+        name: "Poulet crudités",
+        category: "sandwichs",
+        price: 6.50,
+        description: "Poulet, crudités croquantes et sauce maison.",
+        image: "https://images.unsplash.com/photo-1553909489-cd47e0ef937f?auto=format&fit=crop&w=900&q=85"
+    },
+
+    {
+        id: 7,
+        name: "Thon crudités",
+        category: "sandwichs",
+        price: 6.20,
+        description: "Une recette fraîche et généreuse.",
+        image: "https://images.unsplash.com/photo-1481070414801-51fd732d7184?auto=format&fit=crop&w=900&q=85"
+    },
+
+    {
+        id: 8,
+        name: "Eau minérale",
+        category: "boissons",
+        price: 1.50,
+        description: "La fraîcheur tout simplement.",
+        image: "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&w=900&q=85"
+    },
+
+    {
+        id: 9,
+        name: "Jus d'orange",
+        category: "boissons",
+        price: 3.20,
+        description: "Une pause fruitée et vitaminée.",
+        image: "https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=900&q=85"
+    },
+
+    {
+        id: 10,
+        name: "Café",
+        category: "boissons",
+        price: 2.20,
+        description: "Un café pour accompagner votre gourmandise.",
+        image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=900&q=85"
+    },
+
+    {
+        id: 11,
+        name: "Thé",
+        category: "boissons",
+        price: 2.50,
+        description: "Une boisson chaude et réconfortante.",
+        image: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=900&q=85"
+    },
+
+    {
+        id: 12,
+        name: "Part de flan",
+        category: "patisseries",
+        price: 3.80,
+        description: "Crémeux, vanillé et généreux.",
+        image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=85"
+    }
+
+];
+
+
+/* =====================================================
+   PANIER
+===================================================== */
+
+let cart = JSON.parse(
+    localStorage.getItem("les-delices-panier")
+) || [];
+
+
+/* =====================================================
+   ELEMENTS HTML
+===================================================== */
+
+const productsGrid =
+    document.getElementById("productsGrid");
+
+const cartItems =
+    document.getElementById("cartItems");
+
+const cartTotal =
+    document.getElementById("cartTotal");
+
+const cartCount =
+    document.getElementById("cartCount");
+
+const toast =
+    document.getElementById("toast");
+
+
+/* =====================================================
+   FORMAT PRIX
+===================================================== */
+
+function formatPrice(price) {
+
+    return price.toLocaleString(
+        "fr-FR",
+        {
+            style: "currency",
+            currency: "EUR"
+        }
+    );
+
+}
+
+
+/* =====================================================
+   NOTIFICATION
+===================================================== */
+
+function showToast(message) {
+
+    toast.textContent = message;
+
+    toast.classList.add("show");
+
+    setTimeout(() => {
+
+        toast.classList.remove("show");
+
+    }, 2500);
+
+}
+
+
+/* =====================================================
+   SAUVEGARDE PANIER
+===================================================== */
+
+function saveCart() {
+
+    localStorage.setItem(
+        "les-delices-panier",
+        JSON.stringify(cart)
+    );
+
+}
+
+
+/* =====================================================
+   AFFICHER PRODUITS
+===================================================== */
+
+function renderProducts(filter = "all") {
+
+    const filteredProducts =
+        filter === "all"
+
+        ? products
+
+        : products.filter(
+            product =>
+                product.category === filter
+        );
+
+
+    productsGrid.innerHTML =
+        filteredProducts.map(product => `
+
+            <article class="product-card">
+
+                <div
+                    class="product-image"
+                    style="
+                        background-image:
+                        url('${product.image}');
+                    ">
+                </div>
+
+                <div class="product-info">
+
+                    <h3>
+                        ${product.name}
+                    </h3>
+
+                    <p>
+                        ${product.description}
+                    </p>
+
+                    <div class="product-bottom">
+
+                        <span class="price">
+                            ${formatPrice(product.price)}
+                        </span>
+
+                        <button
+                            class="add-button"
+                            data-add="${product.id}">
+
+                            Ajouter
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        `).join("");
+
+
+    document
+        .querySelectorAll("[data-add]")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    addToCart(
+                        Number(button.dataset.add)
+                    );
+
+                }
+            );
+
+        });
+
+}
+
+
+/* =====================================================
+   AJOUTER AU PANIER
+===================================================== */
+
+function addToCart(id) {
+
+    const existing =
+        cart.find(item => item.id === id);
+
+
+    if (existing) {
+
+        existing.quantity++;
+
+    } else {
+
+        cart.push({
+
+            id: id,
+
+            quantity: 1
+
+        });
+
+    }
+
+
+    saveCart();
+
+    renderCart();
+
+    showToast(
+        "Produit ajouté au panier ✓"
+    );
+
+}
+
+
+/* =====================================================
+   MODIFIER QUANTITÉ
+===================================================== */
+
+function changeQuantity(id, amount) {
+
+    const item =
+        cart.find(item => item.id === id);
+
+
+    if (!item) return;
+
+
+    item.quantity += amount;
+
+
+    if (item.quantity <= 0) {
+
+        cart =
+            cart.filter(
+                item => item.id !== id
+            );
+
+    }
+
+
+    saveCart();
+
+    renderCart();
+
+}
+
+
+/* =====================================================
+   SUPPRIMER PRODUIT
+===================================================== */
+
+function removeFromCart(id) {
+
+    cart =
+        cart.filter(
+            item => item.id !== id
+        );
+
+
+    saveCart();
+
+    renderCart();
+
+}
+
+
+/* =====================================================
+   AFFICHER PANIER
+===================================================== */
+
+function renderCart() {
+
+    if (cart.length === 0) {
+
+        cartItems.innerHTML = `
+
+            <div class="empty-cart">
+                Votre panier est vide.
+            </div>
+
+        `;
+
+    } else {
+
+        cartItems.innerHTML =
+            cart.map(item => {
+
+                const product =
+                    products.find(
+                        p => p.id === item.id
+                    );
+
+
+                return `
+
+                    <div class="cart-row">
+
+                        <div>
+
+                            <strong>
+                                ${product.name}
+                            </strong>
+
+                            <div class="cart-meta">
+
+                                ${formatPrice(product.price)}
+                                ×
+                                ${item.quantity}
+
+                                =
+                                ${formatPrice(
+                                    product.price *
+                                    item.quantity
+                                )}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="quantity">
+
+                            <button
+                                data-minus="${product.id}">
+                                −
+                            </button>
+
+                            <span>
+                                ${item.quantity}
+                            </span>
+
+                            <button
+                                data-plus="${product.id}">
+                                +
+                            </button>
+
+                            <button
+                                class="remove-button"
+                                data-remove="${product.id}">
+                                Suppr.
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }).join("");
+
+    }
+
+
+    let total = 0;
+
+    let quantity = 0;
+
+
+    cart.forEach(item => {
+
+        const product =
+            products.find(
+                p => p.id === item.id
+            );
+
+
+        total +=
+            product.price *
+            item.quantity;
+
+
+        quantity +=
+            item.quantity;
+
+    });
+
+
+    cartTotal.textContent =
+        formatPrice(total);
+
+
+    cartCount.textContent =
+        quantity;
+
+
+    document
+        .querySelectorAll("[data-minus]")
+        .forEach(button => {
+
+            button.onclick = () => {
+
+                changeQuantity(
+                    Number(button.dataset.minus),
+                    -1
+                );
+
+            };
+
+        });
+
+
+    document
+        .querySelectorAll("[data-plus]")
+        .forEach(button => {
+
+            button.onclick = () => {
+
+                changeQuantity(
+                    Number(button.dataset.plus),
+                    1
+                );
+
+            };
+
+        });
+
+
+    document
+        .querySelectorAll("[data-remove]")
+        .forEach(button => {
+
+            button.onclick = () => {
+
+                removeFromCart(
+                    Number(button.dataset.remove)
+                );
+
+            };
+
+        });
+
+}
+
+
+/* =====================================================
+   FILTRES
+===================================================== */
+
+document
+    .querySelectorAll(".filter")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                document
+                    .querySelectorAll(".filter")
+                    .forEach(
+                        btn =>
+                            btn.classList.remove("active")
+                    );
+
+
+                button.classList.add("active");
+
+
+                renderProducts(
+                    button.dataset.filter
+                );
+
+            }
+        );
+
+    });
+
+
+/* =====================================================
+   MENU MOBILE
+===================================================== */
+
+const menuToggle =
+    document.getElementById("menuToggle");
+
+const navLinks =
+    document.getElementById("navLinks");
+
+
+menuToggle.addEventListener(
+    "click",
+    () => {
+
+        navLinks.classList.toggle("open");
+
+    }
+);
+
+
+document
+    .querySelectorAll(".nav-links a")
+    .forEach(link => {
+
+        link.addEventListener(
+            "click",
+            () => {
+
+                navLinks.classList.remove("open");
+
+            }
+        );
+
+    });
+
+
+/* =====================================================
+   GALERIE / LIGHTBOX
+===================================================== */
+
+const lightbox =
+    document.getElementById("lightbox");
+
+const lightboxImage =
+    document.getElementById("lightboxImage");
+
+const closeLightbox =
+    document.getElementById("closeLightbox");
+
+
+document
+    .querySelectorAll(".gallery-image")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const image =
+                    button.querySelector("img");
+
+
+                lightboxImage.src =
+                    image.src;
+
+
+                lightboxImage.alt =
+                    image.alt;
+
+
+                lightbox.classList.add("open");
+
+            }
+        );
+
+    });
+
+
+closeLightbox.addEventListener(
+    "click",
+    () => {
+
+        lightbox.classList.remove("open");
+
+    }
+);
+
+
+lightbox.addEventListener(
+    "click",
+    event => {
+
+        if (event.target === lightbox) {
+
+            lightbox.classList.remove("open");
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   FORMULAIRE COMMANDE
+===================================================== */
+
+document
+    .getElementById("orderForm")
+    .addEventListener(
+        "submit",
+        event => {
+
+            event.preventDefault();
+
+
+            if (cart.length === 0) {
+
+                showToast(
+                    "Votre panier est vide."
+                );
+
+                return;
+
+            }
+
+
+            /*
+             * POUR L'INSTANT :
+             * démonstration locale.
+             *
+             * PLUS TARD :
+             * cette partie sera connectée
+             * à la base de données Supabase.
+             */
+
+
+            showToast(
+                "Commande enregistrée ✓"
+            );
+
+
+            event.target.reset();
+
+        }
+    );
+
+
+/* =====================================================
+   FORMULAIRE PERSONNALISÉ
+===================================================== */
+
+document
+    .getElementById("customForm")
+    .addEventListener(
+        "submit",
+        event => {
+
+            event.preventDefault();
+
+
+            showToast(
+                "Demande personnalisée envoyée ✓"
+            );
+
+
+            event.target.reset();
+
+        }
+    );
+
+
+/* =====================================================
+   FORMULAIRE CONTACT
+===================================================== */
+
+document
+    .getElementById("contactForm")
+    .addEventListener(
+        "submit",
+        event => {
+
+            event.preventDefault();
+
+
+            showToast(
+                "Message envoyé ✓"
+            );
+
+
+            event.target.reset();
+
+        }
+    );
+
+
+/* =====================================================
+   ANNÉE FOOTER
+===================================================== */
+
+document.getElementById("year")
+    .textContent =
+    new Date().getFullYear();
+
+
+/* =====================================================
+   INITIALISATION
+===================================================== */
+
+renderProducts();
+
+renderCart();
