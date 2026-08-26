@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Créer un compte | Les Délices De Pauline</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Icônes -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+<header class="site-header">
+
+    <a href="index.html" class="logo">
+        Les Délices De Pauline
+    </a>
+
+    <a href="index.html" class="header-link">
+        <i class="fa-solid fa-arrow-left"></i>
+        Retour au site
+    </a>
+
+</header>
+
+
+<main class="auth-page">
+
+    <div class="auth-card">
+
+        <div class="auth-icon">
+            <i class="fa-solid fa-user-plus"></i>
+        </div>
+
+        <h1>Créer un compte</h1>
+
+        <p class="auth-subtitle">
+            Créez votre compte pour retrouver facilement vos commandes.
+        </p>
+
+        <form id="registerForm">
+
+            <div class="form-group">
+                <label for="prenom">Prénom</label>
+
+                <input
+                    type="text"
+                    id="prenom"
+                    placeholder="Votre prénom"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="nom">Nom</label>
+
+                <input
+                    type="text"
+                    id="nom"
+                    placeholder="Votre nom"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="email">Adresse e-mail</label>
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="vous@example.com"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="telephone">Téléphone</label>
+
+                <input
+                    type="tel"
+                    id="telephone"
+                    placeholder="06 00 00 00 00"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Minimum 6 caractères"
+                    minlength="6"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="passwordConfirm">
+                    Confirmer le mot de passe
+                </label>
+
+                <input
+                    type="password"
+                    id="passwordConfirm"
+                    placeholder="Retapez votre mot de passe"
+                    minlength="6"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn-primary auth-button">
+                <i class="fa-solid fa-user-plus"></i>
+                Créer mon compte
+            </button>
+
+            <p id="registerMessage" class="form-message"></p>
+
+        </form>
+
+        <div class="auth-footer">
+            <p>
+                Vous avez déjà un compte ?
+                <a href="connexion.html">Se connecter</a>
+            </p>
+        </div>
+
+    </div>
+
+</main>
+
+
+<script src="auth.js"></script>
+
+</body>
+</html>
