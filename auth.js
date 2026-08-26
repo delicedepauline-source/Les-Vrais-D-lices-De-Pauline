@@ -1,14 +1,12 @@
-/*
-=========================================================
-LES DÉLICES DE PAULINE
-SYSTÈME DE COMPTES
-=========================================================
-*/
+/* =====================================================
+   LES DÉLICES DE PAULINE
+   SYSTÈME DE COMPTES SUPABASE
+===================================================== */
 
 
-// =======================================================
-// CONFIGURATION SUPABASE
-// =======================================================
+/* =====================================================
+   CONFIGURATION SUPABASE
+===================================================== */
 
 const SUPABASE_URL =
     "https://qyysftxupnnfikmrjjue.supabase.co";
@@ -17,9 +15,9 @@ const SUPABASE_ANON_KEY =
     "sb_publishable_0FTC_yZFfch1S10KkDLGqA_pmZTxJMC";
 
 
-// =======================================================
-// CRÉATION DU CLIENT SUPABASE
-// =======================================================
+/* =====================================================
+   CRÉATION DU CLIENT SUPABASE
+===================================================== */
 
 const supabaseClient =
     window.supabase.createClient(
@@ -27,58 +25,166 @@ const supabaseClient =
         SUPABASE_ANON_KEY,
         {
             auth: {
-
-                // Conserver la connexion
                 persistSession: true,
-
-                // Renouveler automatiquement la session
                 autoRefreshToken: true,
-
-                // Détecter les sessions dans l'URL
                 detectSessionInUrl: true
-
             }
         }
     );
 
 
-// =======================================================
-// INITIALISATION
-// =======================================================
-
-document.addEventListener(
-    "DOMContentLoaded",
-    async () => {
-
-        console.log(
-            "Les Délices De Pauline - système de comptes"
-        );
+console.log("SUPABASE AUTH INITIALISÉ");
 
 
-        setupLogin();
+/* =====================================================
+   INSCRIPTION
+===================================================== */
 
-        setupRegister();
+function setupRegister() {
 
-        setupLogout();
+    const form =
+        document.getElementById("registerForm");
 
-        await checkSession();
-
-    }
-);
+    if (!form) return;
 
 
-// =======================================================
-// CONNEXION
-// =======================================================
+    form.addEventListener(
+        "submit",
+        async (event) => {
+
+            event.preventDefault();
+
+
+            const prenom =
+                document.getElementById("prenom")?.value.trim() || "";
+
+            const nom =
+                document.getElementById("nom")?.value.trim() || "";
+
+            const email =
+                document.getElementById("email")?.value.trim() || "";
+
+            const telephone =
+                document.getElementById("telephone")?.value.trim() || "";
+
+            const password =
+                document.getElementById("password")?.value || "";
+
+            const passwordConfirm =
+                document.getElementById("passwordConfirm")?.value || "";
+
+            const message =
+                document.getElementById("registerMessage");
+
+
+            if (password !== passwordConfirm) {
+
+                if (message) {
+
+                    message.textContent =
+                        "Les mots de passe ne correspondent pas.";
+
+                    message.className =
+                        "form-message error";
+
+                }
+
+                return;
+            }
+
+
+            if (message) {
+
+                message.textContent =
+                    "Création de votre compte...";
+
+                message.className =
+                    "form-message";
+
+            }
+
+
+            const { error } =
+                await supabaseClient.auth.signUp({
+
+                    email: email,
+
+                    password: password,
+
+                    options: {
+
+                        data: {
+
+                            prenom: prenom,
+
+                            nom: nom,
+
+                            telephone: telephone
+
+                        }
+
+                    }
+
+                });
+
+
+            if (error) {
+
+                console.error(
+                    "Erreur inscription :",
+                    error
+                );
+
+
+                if (message) {
+
+                    message.textContent =
+                        error.message;
+
+                    message.className =
+                        "form-message error";
+
+                }
+
+                return;
+
+            }
+
+
+            if (message) {
+
+                message.textContent =
+                    "Compte créé ! Vous pouvez maintenant vous connecter.";
+
+                message.className =
+                    "form-message success";
+
+            }
+
+
+            setTimeout(() => {
+
+                window.location.href =
+                    "connexion.html";
+
+            }, 1500);
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   CONNEXION
+===================================================== */
 
 function setupLogin() {
 
     const form =
         document.getElementById("loginForm");
 
-
-    if (!form)
-        return;
+    if (!form) return;
 
 
     form.addEventListener(
@@ -91,14 +197,14 @@ function setupLogin() {
             const email =
                 document
                     .getElementById("loginEmail")
-                    .value
-                    .trim();
+                    ?.value
+                    .trim() || "";
 
 
             const password =
                 document
                     .getElementById("loginPassword")
-                    .value;
+                    ?.value || "";
 
 
             const message =
@@ -107,22 +213,18 @@ function setupLogin() {
                 );
 
 
-            message.textContent =
-                "Connexion...";
+            if (message) {
 
-            message.className =
-                "form-message";
+                message.textContent =
+                    "Connexion...";
+
+                message.className =
+                    "form-message";
+
+            }
 
 
-            console.log(
-                "Tentative de connexion..."
-            );
-
-
-            const {
-                data,
-                error
-            } =
+            const { data, error } =
                 await supabaseClient.auth
                     .signInWithPassword({
 
@@ -136,17 +238,20 @@ function setupLogin() {
             if (error) {
 
                 console.error(
-                    "Erreur de connexion :",
+                    "Erreur connexion :",
                     error
                 );
 
 
-                message.textContent =
-                    "Adresse e-mail ou mot de passe incorrect.";
+                if (message) {
 
-                message.className =
-                    "form-message error";
+                    message.textContent =
+                        "Adresse e-mail ou mot de passe incorrect.";
 
+                    message.className =
+                        "form-message error";
+
+                }
 
                 return;
 
@@ -159,28 +264,23 @@ function setupLogin() {
             );
 
 
-            message.textContent =
-                "Connexion réussie !";
+            if (message) {
 
-            message.className =
-                "form-message success";
+                message.textContent =
+                    "Connexion réussie !";
 
+                message.className =
+                    "form-message success";
 
-            /*
-            Supabase conserve automatiquement
-            la session dans le stockage du navigateur.
-            */
+            }
 
 
-            setTimeout(
-                () => {
+            setTimeout(() => {
 
-                    window.location.href =
-                        "compte.html";
+                window.location.href =
+                    "compte.html";
 
-                },
-                500
-            );
+            }, 500);
 
         }
     );
@@ -188,294 +288,111 @@ function setupLogin() {
 }
 
 
-// =======================================================
-// INSCRIPTION
-// =======================================================
+/* =====================================================
+   DÉCONNEXION
+===================================================== */
 
-function setupRegister() {
+function setupLogout() {
 
-    const form =
+    const logoutButton =
         document.getElementById(
-            "registerForm"
+            "logoutButton"
         );
 
 
-    if (!form)
-        return;
+    const adminLogout =
+        document.getElementById(
+            "adminLogout"
+        );
 
 
-    form.addEventListener(
-        "submit",
-        async (event) => {
-
-            event.preventDefault();
-
-
-            const prenom =
-                document
-                    .getElementById("prenom")
-                    .value
-                    .trim();
+    const buttons = [
+        logoutButton,
+        adminLogout
+    ];
 
 
-            const nom =
-                document
-                    .getElementById("nom")
-                    .value
-                    .trim();
+    buttons.forEach(button => {
+
+        if (!button) return;
 
 
-            const email =
-                document
-                    .getElementById("email")
-                    .value
-                    .trim();
+        button.addEventListener(
+            "click",
+            async () => {
+
+                const { error } =
+                    await supabaseClient.auth.signOut();
 
 
-            const telephone =
-                document
-                    .getElementById("telephone")
-                    .value
-                    .trim();
+                if (error) {
+
+                    console.error(
+                        "Erreur déconnexion :",
+                        error
+                    );
+
+                    return;
+
+                }
 
 
-            const password =
-                document
-                    .getElementById("password")
-                    .value;
-
-
-            const passwordConfirm =
-                document
-                    .getElementById(
-                        "passwordConfirm"
-                    )
-                    .value;
-
-
-            const message =
-                document.getElementById(
-                    "registerMessage"
-                );
-
-
-            // Vérification du mot de passe
-            if (
-                password !==
-                passwordConfirm
-            ) {
-
-                message.textContent =
-                    "Les mots de passe ne correspondent pas.";
-
-                message.className =
-                    "form-message error";
-
-                return;
+                window.location.href =
+                    "index.html";
 
             }
+        );
 
-
-            message.textContent =
-                "Création de votre compte...";
-
-
-            message.className =
-                "form-message";
-
-
-            const {
-                data,
-                error
-            } =
-                await supabaseClient.auth
-                    .signUp({
-
-                        email: email,
-
-                        password: password,
-
-                        options: {
-
-                            data: {
-
-                                prenom: prenom,
-
-                                nom: nom,
-
-                                telephone: telephone
-
-                            }
-
-                        }
-
-                    });
-
-
-            if (error) {
-
-                console.error(
-                    "Erreur inscription :",
-                    error
-                );
-
-
-                message.textContent =
-                    error.message;
-
-                message.className =
-                    "form-message error";
-
-                return;
-
-            }
-
-
-            console.log(
-                "Compte créé"
-            );
-
-
-            message.textContent =
-                "Votre compte a été créé !";
-
-            message.className =
-                "form-message success";
-
-
-            setTimeout(
-                () => {
-
-                    window.location.href =
-                        "connexion.html";
-
-                },
-                1500
-            );
-
-        }
-    );
+    });
 
 }
 
 
-// =======================================================
-// VÉRIFICATION DE LA SESSION
-// =======================================================
+/* =====================================================
+   CHARGER LE COMPTE
+===================================================== */
 
-async function checkSession() {
+async function loadAccount() {
 
-    console.log(
-        "Vérification de la session..."
-    );
+    const userEmail =
+        document.getElementById(
+            "userEmail"
+        );
+
+
+    /*
+       Si on n'est pas sur compte.html,
+       on ne fait rien.
+    */
+
+    if (!userEmail) return;
 
 
     const {
         data,
         error
     } =
-        await supabaseClient.auth
-            .getSession();
+        await supabaseClient.auth.getUser();
 
 
-    if (error) {
-
-        console.error(
-            "Erreur récupération session :",
-            error
-        );
-
-        return;
-
-    }
-
-
-    const session =
-        data.session;
-
-
-    // ===================================================
-    // SESSION TROUVÉE
-    // ===================================================
-
-    if (session) {
+    if (error || !data.user) {
 
         console.log(
-            "Session trouvée :",
-            session.user.email
+            "Aucun utilisateur connecté."
         );
 
-
-        /*
-        Si l'utilisateur est sur la page
-        de connexion alors qu'il est déjà
-        connecté, on l'envoie directement
-        sur son compte.
-        */
-
-        if (
-            document.getElementById(
-                "loginForm"
-            )
-        ) {
-
-            window.location.href =
-                "compte.html";
-
-            return;
-
-        }
-
-
-        /*
-        Si on est sur compte.html,
-        on affiche les informations.
-        */
-
-        loadUser(
-            session.user
-        );
-
-
-        return;
-
-    }
-
-
-    // ===================================================
-    // PAS DE SESSION
-    // ===================================================
-
-    console.log(
-        "Aucune session active."
-    );
-
-
-    /*
-    Si on est sur compte.html
-    sans être connecté,
-    retour à connexion.html.
-    */
-
-    if (
-        document.getElementById(
-            "userEmail"
-        )
-    ) {
 
         window.location.href =
             "connexion.html";
 
+        return;
+
     }
 
-}
 
+    const user =
+        data.user;
 
-// =======================================================
-// AFFICHER LES INFORMATIONS DU COMPTE
-// =======================================================
-
-function loadUser(user) {
 
     const metadata =
         user.user_metadata || {};
@@ -494,150 +411,91 @@ function loadUser(user) {
         "Non renseigné";
 
 
-    const firstName =
+    const userFirstName =
         document.getElementById(
             "userFirstName"
         );
 
 
-    const fullName =
+    const userFullName =
         document.getElementById(
             "userFullName"
         );
 
 
-    const email =
-        document.getElementById(
-            "userEmail"
-        );
-
-
-    const phone =
+    const userPhone =
         document.getElementById(
             "userPhone"
         );
 
 
-    if (firstName) {
+    if (userFirstName) {
 
-        firstName.textContent =
+        userFirstName.textContent =
             prenom;
 
     }
 
 
-    if (fullName) {
+    if (userFullName) {
 
-        fullName.textContent =
+        userFullName.textContent =
             `${prenom} ${nom}`.trim();
 
     }
 
 
-    if (email) {
-
-        email.textContent =
-            user.email;
-
-    }
+    userEmail.textContent =
+        user.email;
 
 
-    if (phone) {
+    if (userPhone) {
 
-        phone.textContent =
+        userPhone.textContent =
             telephone;
 
     }
 
-}
 
-
-// =======================================================
-// DÉCONNEXION
-// =======================================================
-
-function setupLogout() {
-
-    const logoutButton =
-        document.getElementById(
-            "logoutButton"
-        );
-
-
-    if (!logoutButton)
-        return;
-
-
-    logoutButton.addEventListener(
-        "click",
-        async () => {
-
-            console.log(
-                "Déconnexion..."
-            );
-
-
-            const {
-                error
-            } =
-                await supabaseClient.auth
-                    .signOut();
-
-
-            if (error) {
-
-                console.error(
-                    "Erreur de déconnexion :",
-                    error
-                );
-
-
-                return;
-
-            }
-
-
-            console.log(
-                "Déconnexion réussie"
-            );
-
-
-            window.location.href =
-                "index.html";
-
-        }
+    console.log(
+        "Compte chargé :",
+        user.email
     );
 
 }
 
 
-// =======================================================
-// SURVEILLANCE DE LA SESSION
-// =======================================================
+/* =====================================================
+   INITIALISATION
+===================================================== */
 
-supabaseClient.auth.onAuthStateChange(
-    (event, session) => {
+function initializeAuth() {
 
-        console.log(
-            "Événement Supabase :",
-            event
-        );
+    setupRegister();
+
+    setupLogin();
+
+    setupLogout();
+
+    loadAccount();
+
+}
 
 
-        if (session) {
+if (document.readyState === "loading") {
 
-            console.log(
-                "Utilisateur connecté :",
-                session.user.email
-            );
+    document.addEventListener(
+        "DOMContentLoaded",
+        initializeAuth
+    );
 
-        } else {
+} else {
 
-            console.log(
-                "Utilisateur déconnecté"
-            );
+    initializeAuth();
 
-        }
+}
 
-    }
+
+console.log(
+    "AUTH.JS EST BIEN CHARGÉ"
 );
