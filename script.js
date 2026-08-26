@@ -797,3 +797,16 @@ document.getElementById("year")
 renderProducts();
 
 renderCart();
+// ===============================
+// SUPABASE
+// ===============================
+
+const SUPABASE_URL = "https://qyysftxupnnfikmrjjue.supabase.co";
+const SUPABASE_KEY = "sb_publishable_0FTC_yZFfch1S10KkDLGqA_pmZTxJMC";
+
+const supabaseClient = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+console.log("Supabase connecté !");
