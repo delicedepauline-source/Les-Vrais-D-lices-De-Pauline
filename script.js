@@ -1,32 +1,33 @@
 /* =====================================================
    LES DÉLICES DE PAULINE
    JAVASCRIPT
-
-   IMPORTANT :
-
-   C'est ici que tu peux modifier facilement :
-
-   - les produits
-   - les prix
-   - les descriptions
-   - les images
-   - les catégories
-
 ===================================================== */
 
 console.log("SCRIPT.JS EST BIEN CHARGÉ !");
+
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL = "https://qyysftxupnnfikmrjjue.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_0FTC_yZFfch1S10KkDLGqA_pmZTxJMC";
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+console.log("Supabase connecté !");
+
 
 /* =====================================================
    PRODUITS
 ===================================================== */
 
-const products = [const SUPABASE_URL = "https://qyysftxupnnfikmrjjue.supabase.co";
-const SUPABASE_ANON_KEY = "TA_CLE_ANON_ICI";
-
-const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-);
+const products = [
 
     {
         id: 1,
@@ -152,35 +153,23 @@ let cart = JSON.parse(
    ELEMENTS HTML
 ===================================================== */
 
-const productsGrid =
-    document.getElementById("productsGrid");
-
-const cartItems =
-    document.getElementById("cartItems");
-
-const cartTotal =
-    document.getElementById("cartTotal");
-
-const cartCount =
-    document.getElementById("cartCount");
-
-const toast =
-    document.getElementById("toast");
+const productsGrid = document.getElementById("productsGrid");
+const cartItems = document.getElementById("cartItems");
+const cartTotal = document.getElementById("cartTotal");
+const cartCount = document.getElementById("cartCount");
+const toast = document.getElementById("toast");
 
 
 /* =====================================================
-   FORMAT PRIX
+   PRIX
 ===================================================== */
 
 function formatPrice(price) {
 
-    return price.toLocaleString(
-        "fr-FR",
-        {
-            style: "currency",
-            currency: "EUR"
-        }
-    );
+    return price.toLocaleString("fr-FR", {
+        style: "currency",
+        currency: "EUR"
+    });
 
 }
 
@@ -196,16 +185,14 @@ function showToast(message) {
     toast.classList.add("show");
 
     setTimeout(() => {
-
         toast.classList.remove("show");
-
     }, 2500);
 
 }
 
 
 /* =====================================================
-   SAUVEGARDE PANIER
+   PANIER
 ===================================================== */
 
 function saveCart() {
@@ -218,22 +205,81 @@ function saveCart() {
 }
 
 
+function addToCart(id) {
+
+    const existing = cart.find(
+        item => item.id === id
+    );
+
+    if (existing) {
+
+        existing.quantity++;
+
+    } else {
+
+        cart.push({
+            id: id,
+            quantity: 1
+        });
+
+    }
+
+    saveCart();
+    renderCart();
+
+    showToast("Produit ajouté au panier ✓");
+
+}
+
+
+function changeQuantity(id, amount) {
+
+    const item = cart.find(
+        item => item.id === id
+    );
+
+    if (!item) return;
+
+    item.quantity += amount;
+
+    if (item.quantity <= 0) {
+
+        cart = cart.filter(
+            item => item.id !== id
+        );
+
+    }
+
+    saveCart();
+    renderCart();
+
+}
+
+
+function removeFromCart(id) {
+
+    cart = cart.filter(
+        item => item.id !== id
+    );
+
+    saveCart();
+    renderCart();
+
+}
+
+
 /* =====================================================
-   AFFICHER PRODUITS
+   AFFICHER LES PRODUITS
 ===================================================== */
 
 function renderProducts(filter = "all") {
 
     const filteredProducts =
         filter === "all"
-
-        ? products
-
-        : products.filter(
-            product =>
-                product.category === filter
-        );
-
+            ? products
+            : products.filter(
+                product => product.category === filter
+            );
 
     productsGrid.innerHTML =
         filteredProducts.map(product => `
@@ -242,21 +288,14 @@ function renderProducts(filter = "all") {
 
                 <div
                     class="product-image"
-                    style="
-                        background-image:
-                        url('${product.image}');
-                    ">
+                    style="background-image: url('${product.image}');">
                 </div>
 
                 <div class="product-info">
 
-                    <h3>
-                        ${product.name}
-                    </h3>
+                    <h3>${product.name}</h3>
 
-                    <p>
-                        ${product.description}
-                    </p>
+                    <p>${product.description}</p>
 
                     <div class="product-bottom">
 
@@ -267,9 +306,7 @@ function renderProducts(filter = "all") {
                         <button
                             class="add-button"
                             data-add="${product.id}">
-
                             Ajouter
-
                         </button>
 
                     </div>
@@ -279,7 +316,6 @@ function renderProducts(filter = "all") {
             </article>
 
         `).join("");
-
 
     document
         .querySelectorAll("[data-add]")
@@ -302,97 +338,7 @@ function renderProducts(filter = "all") {
 
 
 /* =====================================================
-   AJOUTER AU PANIER
-===================================================== */
-
-function addToCart(id) {
-
-    const existing =
-        cart.find(item => item.id === id);
-
-
-    if (existing) {
-
-        existing.quantity++;
-
-    } else {
-
-        cart.push({
-
-            id: id,
-
-            quantity: 1
-
-        });
-
-    }
-
-
-    saveCart();
-
-    renderCart();
-
-    showToast(
-        "Produit ajouté au panier ✓"
-    );
-
-}
-
-
-/* =====================================================
-   MODIFIER QUANTITÉ
-===================================================== */
-
-function changeQuantity(id, amount) {
-
-    const item =
-        cart.find(item => item.id === id);
-
-
-    if (!item) return;
-
-
-    item.quantity += amount;
-
-
-    if (item.quantity <= 0) {
-
-        cart =
-            cart.filter(
-                item => item.id !== id
-            );
-
-    }
-
-
-    saveCart();
-
-    renderCart();
-
-}
-
-
-/* =====================================================
-   SUPPRIMER PRODUIT
-===================================================== */
-
-function removeFromCart(id) {
-
-    cart =
-        cart.filter(
-            item => item.id !== id
-        );
-
-
-    saveCart();
-
-    renderCart();
-
-}
-
-
-/* =====================================================
-   AFFICHER PANIER
+   AFFICHER LE PANIER
 ===================================================== */
 
 function renderCart() {
@@ -400,11 +346,9 @@ function renderCart() {
     if (cart.length === 0) {
 
         cartItems.innerHTML = `
-
             <div class="empty-cart">
                 Votre panier est vide.
             </div>
-
         `;
 
     } else {
@@ -417,6 +361,7 @@ function renderCart() {
                         p => p.id === item.id
                     );
 
+                if (!product) return "";
 
                 return `
 
@@ -433,7 +378,6 @@ function renderCart() {
                                 ${formatPrice(product.price)}
                                 ×
                                 ${item.quantity}
-
                                 =
                                 ${formatPrice(
                                     product.price *
@@ -443,7 +387,6 @@ function renderCart() {
                             </div>
 
                         </div>
-
 
                         <div class="quantity">
 
@@ -479,9 +422,7 @@ function renderCart() {
 
 
     let total = 0;
-
     let quantity = 0;
-
 
     cart.forEach(item => {
 
@@ -490,11 +431,11 @@ function renderCart() {
                 p => p.id === item.id
             );
 
+        if (!product) return;
 
         total +=
             product.price *
             item.quantity;
-
 
         quantity +=
             item.quantity;
@@ -504,7 +445,6 @@ function renderCart() {
 
     cartTotal.textContent =
         formatPrice(total);
-
 
     cartCount.textContent =
         quantity;
@@ -573,14 +513,11 @@ document
 
                 document
                     .querySelectorAll(".filter")
-                    .forEach(
-                        btn =>
-                            btn.classList.remove("active")
+                    .forEach(btn =>
+                        btn.classList.remove("active")
                     );
 
-
                 button.classList.add("active");
-
 
                 renderProducts(
                     button.dataset.filter
@@ -602,35 +539,37 @@ const menuToggle =
 const navLinks =
     document.getElementById("navLinks");
 
+if (menuToggle && navLinks) {
 
-menuToggle.addEventListener(
-    "click",
-    () => {
+    menuToggle.addEventListener(
+        "click",
+        () => {
 
-        navLinks.classList.toggle("open");
+            navLinks.classList.toggle("open");
 
-    }
-);
+        }
+    );
 
+    document
+        .querySelectorAll(".nav-links a")
+        .forEach(link => {
 
-document
-    .querySelectorAll(".nav-links a")
-    .forEach(link => {
+            link.addEventListener(
+                "click",
+                () => {
 
-        link.addEventListener(
-            "click",
-            () => {
+                    navLinks.classList.remove("open");
 
-                navLinks.classList.remove("open");
+                }
+            );
 
-            }
-        );
+        });
 
-    });
+}
 
 
 /* =====================================================
-   GALERIE / LIGHTBOX
+   GALERIE
 ===================================================== */
 
 const lightbox =
@@ -654,14 +593,11 @@ document
                 const image =
                     button.querySelector("img");
 
-
                 lightboxImage.src =
                     image.src;
 
-
                 lightboxImage.alt =
                     image.alt;
-
 
                 lightbox.classList.add("open");
 
@@ -671,42 +607,52 @@ document
     });
 
 
-closeLightbox.addEventListener(
-    "click",
-    () => {
+if (closeLightbox) {
 
-        lightbox.classList.remove("open");
-
-    }
-);
-
-
-lightbox.addEventListener(
-    "click",
-    event => {
-
-        if (event.target === lightbox) {
+    closeLightbox.addEventListener(
+        "click",
+        () => {
 
             lightbox.classList.remove("open");
 
         }
+    );
 
-    }
-);
+}
+
+
+if (lightbox) {
+
+    lightbox.addEventListener(
+        "click",
+        event => {
+
+            if (event.target === lightbox) {
+
+                lightbox.classList.remove("open");
+
+            }
+
+        }
+    );
+
+}
 
 
 /* =====================================================
-   FORMULAIRE COMMANDE
+   COMMANDE
 ===================================================== */
 
-document
-    .getElementById("orderForm")
-    .addEventListener(
+const orderForm =
+    document.getElementById("orderForm");
+
+if (orderForm) {
+
+    orderForm.addEventListener(
         "submit",
-        event => {
+        async event => {
 
             event.preventDefault();
-
 
             if (cart.length === 0) {
 
@@ -719,82 +665,140 @@ document
             }
 
 
-            /*
-             * POUR L'INSTANT :
-             * démonstration locale.
-             *
-             * PLUS TARD :
-             * cette partie sera connectée
-             * à la base de données Supabase.
-             */
+            const formData =
+                new FormData(orderForm);
+
+            const order = {
+
+                prenom:
+                    formData.get("prenom"),
+
+                nom:
+                    formData.get("nom"),
+
+                telephone:
+                    formData.get("telephone"),
+
+                email:
+                    formData.get("email"),
+
+                date_retrait:
+                    formData.get("date"),
+
+                heure_retrait:
+                    formData.get("heure"),
+
+                commentaire:
+                    formData.get("commentaire"),
+
+                produits:
+                    cart,
+
+                total:
+                    cart.reduce(
+                        (total, item) => {
+
+                            const product =
+                                products.find(
+                                    p => p.id === item.id
+                                );
+
+                            return total +
+                                (
+                                    product.price *
+                                    item.quantity
+                                );
+
+                        },
+                        0
+                    )
+
+            };
+
+
+            console.log(
+                "Commande prête pour Supabase :",
+                order
+            );
 
 
             showToast(
                 "Commande enregistrée ✓"
             );
 
-
-            event.target.reset();
-
         }
     );
 
+}
+
 
 /* =====================================================
-   FORMULAIRE PERSONNALISÉ
+   DEMANDE PERSONNALISÉE
 ===================================================== */
 
-document
-    .getElementById("customForm")
-    .addEventListener(
+const customForm =
+    document.getElementById("customForm");
+
+if (customForm) {
+
+    customForm.addEventListener(
         "submit",
         event => {
 
             event.preventDefault();
-
 
             showToast(
                 "Demande personnalisée envoyée ✓"
             );
 
-
-            event.target.reset();
+            customForm.reset();
 
         }
     );
 
+}
+
 
 /* =====================================================
-   FORMULAIRE CONTACT
+   CONTACT
 ===================================================== */
 
-document
-    .getElementById("contactForm")
-    .addEventListener(
+const contactForm =
+    document.getElementById("contactForm");
+
+if (contactForm) {
+
+    contactForm.addEventListener(
         "submit",
         event => {
 
             event.preventDefault();
 
-
             showToast(
                 "Message envoyé ✓"
             );
 
-
-            event.target.reset();
+            contactForm.reset();
 
         }
     );
 
+}
+
 
 /* =====================================================
-   ANNÉE FOOTER
+   ANNÉE
 ===================================================== */
 
-document.getElementById("year")
-    .textContent =
-    new Date().getFullYear();
+const year =
+    document.getElementById("year");
+
+if (year) {
+
+    year.textContent =
+        new Date().getFullYear();
+
+}
 
 
 /* =====================================================
@@ -802,18 +806,6 @@ document.getElementById("year")
 ===================================================== */
 
 renderProducts();
-
 renderCart();
+
 console.log("TEST SCRIPT.JS OK");
-
-console.log("Supabase disponible :", typeof supabase);
-
-const SUPABASE_URL = "https://qyysftxupnnfikmrjjue.supabase.co";
-const SUPABASE_KEY = "sb_publishable_0FTC_yZFfch1S10KkDLGqA_pmZTxJMC";
-
-const supabaseClient = supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
-
-console.log("Supabase connecté !");
