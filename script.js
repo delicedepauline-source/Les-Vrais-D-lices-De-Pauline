@@ -21,7 +21,11 @@ const supabaseClient =
         SUPABASE_KEY
     );
 
-console.log("Supabase :", typeof supabaseClient);
+console.log("SCRIPT.JS CHARGE");
+console.log(
+    "Supabase :",
+    typeof supabaseClient
+);
 
 
 /* =====================================================
@@ -154,7 +158,7 @@ let cart =
 
 
 /* =====================================================
-   ELEMENTS
+   ELEMENTS HTML
 ===================================================== */
 
 const productsGrid =
@@ -208,21 +212,29 @@ function showToast(message) {
 
     if (!toast) return;
 
-    toast.textContent = message;
+    toast.textContent =
+        message;
 
-    toast.classList.add("show");
+    toast.classList.add(
+        "show"
+    );
 
-    setTimeout(() => {
+    setTimeout(
+        () => {
 
-        toast.classList.remove("show");
+            toast.classList.remove(
+                "show"
+            );
 
-    }, 2500);
+        },
+        2500
+    );
 
 }
 
 
 /* =====================================================
-   PANIER
+   SAUVEGARDE PANIER
 ===================================================== */
 
 function saveCart() {
@@ -235,11 +247,16 @@ function saveCart() {
 }
 
 
+/* =====================================================
+   AJOUTER AU PANIER
+===================================================== */
+
 function addToCart(id) {
 
     const existing =
         cart.find(
-            item => item.id === id
+            item =>
+                item.id === id
         );
 
 
@@ -271,6 +288,10 @@ function addToCart(id) {
 }
 
 
+/* =====================================================
+   MODIFIER QUANTITÉ
+===================================================== */
+
 function changeQuantity(
     id,
     amount
@@ -278,21 +299,24 @@ function changeQuantity(
 
     const item =
         cart.find(
-            item => item.id === id
+            item =>
+                item.id === id
         );
 
 
     if (!item) return;
 
 
-    item.quantity += amount;
+    item.quantity +=
+        amount;
 
 
     if (item.quantity <= 0) {
 
         cart =
             cart.filter(
-                item => item.id !== id
+                item =>
+                    item.id !== id
             );
 
     }
@@ -305,11 +329,16 @@ function changeQuantity(
 }
 
 
+/* =====================================================
+   SUPPRIMER
+===================================================== */
+
 function removeFromCart(id) {
 
     cart =
         cart.filter(
-            item => item.id !== id
+            item =>
+                item.id !== id
         );
 
 
@@ -328,7 +357,8 @@ function renderProducts(
     filter = "all"
 ) {
 
-    if (!productsGrid) return;
+    if (!productsGrid)
+        return;
 
 
     const filteredProducts =
@@ -338,13 +368,15 @@ function renderProducts(
 
             : products.filter(
                 product =>
-                    product.category === filter
+                    product.category ===
+                    filter
             );
 
 
     productsGrid.innerHTML =
         filteredProducts
-            .map(product => `
+            .map(
+                product => `
 
                 <article class="product-card">
 
@@ -369,7 +401,9 @@ function renderProducts(
                         <div class="product-bottom">
 
                             <span class="price">
-                                ${formatPrice(product.price)}
+                                ${formatPrice(
+                                    product.price
+                                )}
                             </span>
 
                             <button
@@ -384,28 +418,33 @@ function renderProducts(
 
                 </article>
 
-            `)
+            `
+            )
             .join("");
 
 
     document
-        .querySelectorAll("[data-add]")
-        .forEach(button => {
+        .querySelectorAll(
+            "[data-add]"
+        )
+        .forEach(
+            button => {
 
-            button.addEventListener(
-                "click",
-                () => {
+                button.addEventListener(
+                    "click",
+                    () => {
 
-                    addToCart(
-                        Number(
-                            button.dataset.add
-                        )
-                    );
+                        addToCart(
+                            Number(
+                                button.dataset.add
+                            )
+                        );
 
-                }
-            );
+                    }
+                );
 
-        });
+            }
+        );
 
 }
 
@@ -416,7 +455,8 @@ function renderProducts(
 
 function renderCart() {
 
-    if (!cartItems) return;
+    if (!cartItems)
+        return;
 
 
     if (cart.length === 0) {
@@ -433,80 +473,82 @@ function renderCart() {
 
         cartItems.innerHTML =
             cart
-                .map(item => {
+                .map(
+                    item => {
 
-                    const product =
-                        products.find(
-                            p =>
-                                p.id === item.id
-                        );
-
-
-                    if (!product)
-                        return "";
+                        const product =
+                            products.find(
+                                p =>
+                                    p.id ===
+                                    item.id
+                            );
 
 
-                    return `
+                        if (!product)
+                            return "";
 
-                        <div class="cart-row">
 
-                            <div>
+                        return `
 
-                                <strong>
-                                    ${product.name}
-                                </strong>
+                            <div class="cart-row">
 
-                                <div class="cart-meta">
+                                <div>
 
-                                    ${formatPrice(
-                                        product.price
-                                    )}
+                                    <strong>
+                                        ${product.name}
+                                    </strong>
 
-                                    ×
+                                    <div class="cart-meta">
 
-                                    ${item.quantity}
+                                        ${formatPrice(
+                                            product.price
+                                        )}
 
-                                    =
+                                        ×
 
-                                    ${formatPrice(
-                                        product.price *
-                                        item.quantity
-                                    )}
+                                        ${item.quantity}
+
+                                        =
+
+                                        ${formatPrice(
+                                            product.price *
+                                            item.quantity
+                                        )}
+
+                                    </div>
+
+                                </div>
+
+                                <div class="quantity">
+
+                                    <button
+                                        data-minus="${product.id}">
+                                        −
+                                    </button>
+
+                                    <span>
+                                        ${item.quantity}
+                                    </span>
+
+                                    <button
+                                        data-plus="${product.id}">
+                                        +
+                                    </button>
+
+                                    <button
+                                        class="remove-button"
+                                        data-remove="${product.id}">
+                                        Suppr.
+                                    </button>
 
                                 </div>
 
                             </div>
 
+                        `;
 
-                            <div class="quantity">
-
-                                <button
-                                    data-minus="${product.id}">
-                                    −
-                                </button>
-
-                                <span>
-                                    ${item.quantity}
-                                </span>
-
-                                <button
-                                    data-plus="${product.id}">
-                                    +
-                                </button>
-
-                                <button
-                                    class="remove-button"
-                                    data-remove="${product.id}">
-                                    Suppr.
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    `;
-
-                })
+                    }
+                )
                 .join("");
 
     }
@@ -517,33 +559,39 @@ function renderCart() {
     let quantity = 0;
 
 
-    cart.forEach(item => {
+    cart.forEach(
+        item => {
 
-        const product =
-            products.find(
-                p =>
-                    p.id === item.id
-            );
-
-
-        if (!product) return;
-
-
-        total +=
-            product.price *
-            item.quantity;
+            const product =
+                products.find(
+                    p =>
+                        p.id ===
+                        item.id
+                );
 
 
-        quantity +=
-            item.quantity;
+            if (!product)
+                return;
 
-    });
+
+            total +=
+                product.price *
+                item.quantity;
+
+
+            quantity +=
+                item.quantity;
+
+        }
+    );
 
 
     if (cartTotal) {
 
         cartTotal.textContent =
-            formatPrice(total);
+            formatPrice(
+                total
+            );
 
     }
 
@@ -557,56 +605,71 @@ function renderCart() {
 
 
     document
-        .querySelectorAll("[data-minus]")
-        .forEach(button => {
+        .querySelectorAll(
+            "[data-minus]"
+        )
+        .forEach(
+            button => {
 
-            button.onclick = () => {
+                button.onclick =
+                    () => {
 
-                changeQuantity(
-                    Number(
-                        button.dataset.minus
-                    ),
-                    -1
-                );
+                        changeQuantity(
+                            Number(
+                                button.dataset.minus
+                            ),
+                            -1
+                        );
 
-            };
+                    };
 
-        });
-
-
-    document
-        .querySelectorAll("[data-plus]")
-        .forEach(button => {
-
-            button.onclick = () => {
-
-                changeQuantity(
-                    Number(
-                        button.dataset.plus
-                    ),
-                    1
-                );
-
-            };
-
-        });
+            }
+        );
 
 
     document
-        .querySelectorAll("[data-remove]")
-        .forEach(button => {
+        .querySelectorAll(
+            "[data-plus]"
+        )
+        .forEach(
+            button => {
 
-            button.onclick = () => {
+                button.onclick =
+                    () => {
 
-                removeFromCart(
-                    Number(
-                        button.dataset.remove
-                    )
-                );
+                        changeQuantity(
+                            Number(
+                                button.dataset.plus
+                            ),
+                            1
+                        );
 
-            };
+                    };
 
-        });
+            }
+        );
+
+
+    document
+        .querySelectorAll(
+            "[data-remove]"
+        )
+        .forEach(
+            button => {
+
+                button.onclick =
+                    () => {
+
+                        removeFromCart(
+                            Number(
+                                button.dataset.remove
+                            )
+                        );
+
+                    };
+
+            }
+        );
 
 }
 
@@ -616,37 +679,45 @@ function renderCart() {
 ===================================================== */
 
 document
-    .querySelectorAll(".filter")
-    .forEach(button => {
+    .querySelectorAll(
+        ".filter"
+    )
+    .forEach(
+        button => {
 
-        button.addEventListener(
-            "click",
-            () => {
+            button.addEventListener(
+                "click",
+                () => {
 
-                document
-                    .querySelectorAll(".filter")
-                    .forEach(btn => {
+                    document
+                        .querySelectorAll(
+                            ".filter"
+                        )
+                        .forEach(
+                            btn => {
 
-                        btn.classList.remove(
-                            "active"
+                                btn.classList.remove(
+                                    "active"
+                                );
+
+                            }
                         );
 
-                    });
+
+                    button.classList.add(
+                        "active"
+                    );
 
 
-                button.classList.add(
-                    "active"
-                );
+                    renderProducts(
+                        button.dataset.filter
+                    );
 
+                }
+            );
 
-                renderProducts(
-                    button.dataset.filter
-                );
-
-            }
-        );
-
-    });
+        }
+    );
 
 
 /* =====================================================
@@ -680,11 +751,33 @@ if (
         }
     );
 
+
+    document
+        .querySelectorAll(
+            ".nav-links a"
+        )
+        .forEach(
+            link => {
+
+                link.addEventListener(
+                    "click",
+                    () => {
+
+                        navLinks.classList.remove(
+                            "open"
+                        );
+
+                    }
+                );
+
+            }
+        );
+
 }
 
 
 /* =====================================================
-   LIGHTBOX
+   GALERIE / LIGHTBOX
 ===================================================== */
 
 const lightbox =
@@ -707,40 +800,42 @@ document
     .querySelectorAll(
         ".gallery-image"
     )
-    .forEach(button => {
+    .forEach(
+        button => {
 
-        button.addEventListener(
-            "click",
-            () => {
+            button.addEventListener(
+                "click",
+                () => {
 
-                const image =
-                    button.querySelector(
-                        "img"
+                    const image =
+                        button.querySelector(
+                            "img"
+                        );
+
+
+                    if (
+                        !image ||
+                        !lightbox ||
+                        !lightboxImage
+                    )
+                        return;
+
+
+                    lightboxImage.src =
+                        image.src;
+
+                    lightboxImage.alt =
+                        image.alt;
+
+                    lightbox.classList.add(
+                        "open"
                     );
 
+                }
+            );
 
-                if (
-                    !image ||
-                    !lightbox ||
-                    !lightboxImage
-                )
-                    return;
-
-
-                lightboxImage.src =
-                    image.src;
-
-                lightboxImage.alt =
-                    image.alt;
-
-                lightbox.classList.add(
-                    "open"
-                );
-
-            }
-        );
-
-    });
+        }
+    );
 
 
 if (closeLightbox) {
@@ -763,8 +858,31 @@ if (closeLightbox) {
 }
 
 
+if (lightbox) {
+
+    lightbox.addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target ===
+                lightbox
+            ) {
+
+                lightbox.classList.remove(
+                    "open"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
 /* =====================================================
-   CRÉATION DE COMPTE
+   COMPTE
 ===================================================== */
 
 const signupForm =
@@ -787,10 +905,6 @@ const accountMessage =
         "accountMessage"
     );
 
-
-/* =====================================================
-   MESSAGE COMPTE
-===================================================== */
 
 function accountMsg(
     message
@@ -820,15 +934,20 @@ if (signupForm) {
 
 
             const email =
-                document.getElementById(
-                    "signupEmail"
-                ).value.trim();
+                document
+                    .getElementById(
+                        "signupEmail"
+                    )
+                    .value
+                    .trim();
 
 
             const password =
-                document.getElementById(
-                    "signupPassword"
-                ).value;
+                document
+                    .getElementById(
+                        "signupPassword"
+                    )
+                    .value;
 
 
             accountMsg(
@@ -855,12 +974,17 @@ if (signupForm) {
 
             if (error) {
 
-                console.error(error);
+                console.error(
+                    "Erreur inscription :",
+                    error
+                );
+
 
                 accountMsg(
                     "Erreur : " +
                     error.message
                 );
+
 
                 return;
 
@@ -900,15 +1024,20 @@ if (loginForm) {
 
 
             const email =
-                document.getElementById(
-                    "loginEmail"
-                ).value.trim();
+                document
+                    .getElementById(
+                        "loginEmail"
+                    )
+                    .value
+                    .trim();
 
 
             const password =
-                document.getElementById(
-                    "loginPassword"
-                ).value;
+                document
+                    .getElementById(
+                        "loginPassword"
+                    )
+                    .value;
 
 
             accountMsg(
@@ -935,12 +1064,17 @@ if (loginForm) {
 
             if (error) {
 
-                console.error(error);
+                console.error(
+                    "Erreur connexion :",
+                    error
+                );
+
 
                 accountMsg(
                     "Erreur : " +
                     error.message
                 );
+
 
                 return;
 
@@ -990,10 +1124,16 @@ if (logoutButton) {
 
             if (error) {
 
+                console.error(
+                    error
+                );
+
+
                 accountMsg(
                     "Erreur : " +
                     error.message
                 );
+
 
                 return;
 
@@ -1024,34 +1164,34 @@ function updateAccountUI(
 ) {
 
     if (
-        signupForm &&
-        loginForm &&
-        logoutButton
-    ) {
+        !signupForm ||
+        !loginForm ||
+        !logoutButton
+    )
+        return;
 
-        if (user) {
 
-            signupForm.style.display =
-                "none";
+    if (user) {
 
-            loginForm.style.display =
-                "none";
+        signupForm.style.display =
+            "none";
 
-            logoutButton.style.display =
-                "block";
+        loginForm.style.display =
+            "none";
 
-        } else {
+        logoutButton.style.display =
+            "block";
 
-            signupForm.style.display =
-                "block";
+    } else {
 
-            loginForm.style.display =
-                "block";
+        signupForm.style.display =
+            "block";
 
-            logoutButton.style.display =
-                "none";
+        loginForm.style.display =
+            "block";
 
-        }
+        logoutButton.style.display =
+            "none";
 
     }
 
@@ -1059,17 +1199,35 @@ function updateAccountUI(
 
 
 /* =====================================================
-   VÉRIFIER UTILISATEUR
+   VÉRIFIER SESSION
 ===================================================== */
 
 async function checkUser() {
 
     const {
-        data
+        data,
+        error
     } =
         await supabaseClient
             .auth
             .getUser();
+
+
+    if (error) {
+
+        console.log(
+            "Pas de session active."
+        );
+
+
+        updateAccountUI(
+            null
+        );
+
+
+        return;
+
+    }
 
 
     if (data.user) {
@@ -1086,10 +1244,6 @@ async function checkUser() {
 
     } else {
 
-        console.log(
-            "Aucun utilisateur connecté."
-        );
-
         updateAccountUI(
             null
         );
@@ -1100,7 +1254,7 @@ async function checkUser() {
 
 
 /* =====================================================
-   COMMANDES SUPABASE
+   COMMANDES
 ===================================================== */
 
 const orderForm =
@@ -1118,7 +1272,7 @@ if (orderForm) {
             event.preventDefault();
 
 
-            /* PANIER VIDE */
+            /* PANIER */
 
             if (cart.length === 0) {
 
@@ -1126,26 +1280,10 @@ if (orderForm) {
                     "Votre panier est vide."
                 );
 
+
                 return;
 
             }
-
-
-            /* UTILISATEUR */
-
-            const {
-                data:
-                    userData
-            } =
-                await supabaseClient
-                    .auth
-                    .getUser();
-
-
-            /*
-             * Pour l'instant la commande
-             * peut être passée sans compte.
-             */
 
 
             /* FORMULAIRE */
@@ -1188,7 +1326,7 @@ if (orderForm) {
                 );
 
 
-            /* COMMANDE */
+            /* DONNÉES COMMANDE */
 
             const order = {
 
@@ -1237,7 +1375,7 @@ if (orderForm) {
 
 
             console.log(
-                "Commande envoyée :",
+                "Commande :",
                 order
             );
 
@@ -1261,7 +1399,7 @@ if (orderForm) {
             if (error) {
 
                 console.error(
-                    "Erreur commande :",
+                    "ERREUR COMMANDE :",
                     error
                 );
 
@@ -1307,7 +1445,7 @@ if (orderForm) {
 
 
 /* =====================================================
-   FORMULAIRE PERSONNALISÉ
+   DEMANDE PERSONNALISÉE
 ===================================================== */
 
 const customForm =
@@ -1320,7 +1458,7 @@ if (customForm) {
 
     customForm.addEventListener(
         "submit",
-        async event => {
+        event => {
 
             event.preventDefault();
 
@@ -1352,7 +1490,7 @@ if (contactForm) {
 
     contactForm.addEventListener(
         "submit",
-        async event => {
+        event => {
 
             event.preventDefault();
 
@@ -1400,5 +1538,5 @@ checkUser();
 
 
 console.log(
-    "LES DÉLICES DE PAULINE : SCRIPT OK ✓"
+    "LES DÉLICES DE PAULINE : TOUT EST CHARGÉ ✓"
 );
