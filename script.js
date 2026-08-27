@@ -1,6 +1,7 @@
-/* =====================================================
+*/* =====================================================
    LES DÉLICES DE PAULINE
-   JAVASCRIPT
+   SCRIPT COMPLET
+   SUPABASE + PRODUITS + PANIER + COMPTES + COMMANDES
 ===================================================== */
 
 
@@ -15,12 +16,12 @@ const SUPABASE_KEY =
     "sb_publishable_0FTC_yZFfch1S10KkDLGqA_pmZTxJMC";
 
 const supabaseClient =
-    supabase.createClient(
+    window.supabase.createClient(
         SUPABASE_URL,
         SUPABASE_KEY
     );
 
-console.log("Supabase connecté !");
+console.log("Supabase :", typeof supabaseClient);
 
 
 /* =====================================================
@@ -153,7 +154,7 @@ let cart =
 
 
 /* =====================================================
-   ÉLÉMENTS HTML
+   ELEMENTS
 ===================================================== */
 
 const productsGrid =
@@ -183,7 +184,7 @@ const toast =
 
 
 /* =====================================================
-   FORMAT PRIX
+   PRIX
 ===================================================== */
 
 function formatPrice(price) {
@@ -221,58 +222,171 @@ function showToast(message) {
 
 
 /* =====================================================
-   PRODUITS
+   PANIER
 ===================================================== */
 
-function renderProducts(filter = "all") {
+function saveCart() {
+
+    localStorage.setItem(
+        "les-delices-panier",
+        JSON.stringify(cart)
+    );
+
+}
+
+
+function addToCart(id) {
+
+    const existing =
+        cart.find(
+            item => item.id === id
+        );
+
+
+    if (existing) {
+
+        existing.quantity++;
+
+    } else {
+
+        cart.push({
+
+            id: id,
+
+            quantity: 1
+
+        });
+
+    }
+
+
+    saveCart();
+
+    renderCart();
+
+    showToast(
+        "Produit ajouté au panier ✓"
+    );
+
+}
+
+
+function changeQuantity(
+    id,
+    amount
+) {
+
+    const item =
+        cart.find(
+            item => item.id === id
+        );
+
+
+    if (!item) return;
+
+
+    item.quantity += amount;
+
+
+    if (item.quantity <= 0) {
+
+        cart =
+            cart.filter(
+                item => item.id !== id
+            );
+
+    }
+
+
+    saveCart();
+
+    renderCart();
+
+}
+
+
+function removeFromCart(id) {
+
+    cart =
+        cart.filter(
+            item => item.id !== id
+        );
+
+
+    saveCart();
+
+    renderCart();
+
+}
+
+
+/* =====================================================
+   AFFICHER PRODUITS
+===================================================== */
+
+function renderProducts(
+    filter = "all"
+) {
 
     if (!productsGrid) return;
 
+
     const filteredProducts =
         filter === "all"
+
             ? products
+
             : products.filter(
                 product =>
                     product.category === filter
             );
 
+
     productsGrid.innerHTML =
-        filteredProducts.map(product => `
+        filteredProducts
+            .map(product => `
 
-            <article class="product-card">
+                <article class="product-card">
 
-                <div
-                    class="product-image"
-                    style="background-image: url('${product.image}');">
-                </div>
+                    <div
+                        class="product-image"
+                        style="
+                            background-image:
+                            url('${product.image}');
+                        ">
+                    </div>
 
-                <div class="product-info">
+                    <div class="product-info">
 
-                    <h3>${product.name}</h3>
+                        <h3>
+                            ${product.name}
+                        </h3>
 
-                    <p>${product.description}</p>
+                        <p>
+                            ${product.description}
+                        </p>
 
-                    <div class="product-bottom">
+                        <div class="product-bottom">
 
-                        <span class="price">
-                            ${formatPrice(product.price)}
-                        </span>
+                            <span class="price">
+                                ${formatPrice(product.price)}
+                            </span>
 
-                        <button
-                            class="add-button"
-                            data-add="${product.id}">
+                            <button
+                                class="add-button"
+                                data-add="${product.id}">
+                                Ajouter
+                            </button>
 
-                            Ajouter
-
-                        </button>
+                        </div>
 
                     </div>
 
-                </div>
+                </article>
 
-            </article>
+            `)
+            .join("");
 
-        `).join("");
 
     document
         .querySelectorAll("[data-add]")
@@ -297,176 +411,111 @@ function renderProducts(filter = "all") {
 
 
 /* =====================================================
-   PANIER
+   AFFICHER PANIER
 ===================================================== */
-
-function saveCart() {
-
-    localStorage.setItem(
-        "les-delices-panier",
-        JSON.stringify(cart)
-    );
-
-}
-
-
-function addToCart(id) {
-
-    const existing =
-        cart.find(
-            item =>
-                item.id === id
-        );
-
-    if (existing) {
-
-        existing.quantity++;
-
-    } else {
-
-        cart.push({
-            id: id,
-            quantity: 1
-        });
-
-    }
-
-    saveCart();
-
-    renderCart();
-
-    showToast(
-        "Produit ajouté au panier ✓"
-    );
-
-}
-
-
-function changeQuantity(id, amount) {
-
-    const item =
-        cart.find(
-            item =>
-                item.id === id
-        );
-
-    if (!item) return;
-
-    item.quantity += amount;
-
-    if (item.quantity <= 0) {
-
-        cart =
-            cart.filter(
-                item =>
-                    item.id !== id
-            );
-
-    }
-
-    saveCart();
-
-    renderCart();
-
-}
-
-
-function removeFromCart(id) {
-
-    cart =
-        cart.filter(
-            item =>
-                item.id !== id
-        );
-
-    saveCart();
-
-    renderCart();
-
-}
-
 
 function renderCart() {
 
     if (!cartItems) return;
 
+
     if (cart.length === 0) {
 
         cartItems.innerHTML = `
+
             <div class="empty-cart">
                 Votre panier est vide.
             </div>
+
         `;
 
     } else {
 
         cartItems.innerHTML =
-            cart.map(item => {
+            cart
+                .map(item => {
 
-                const product =
-                    products.find(
-                        p =>
-                            p.id === item.id
-                    );
+                    const product =
+                        products.find(
+                            p =>
+                                p.id === item.id
+                        );
 
-                if (!product) return "";
 
-                return `
+                    if (!product)
+                        return "";
 
-                    <div class="cart-row">
 
-                        <div>
+                    return `
 
-                            <strong>
-                                ${product.name}
-                            </strong>
+                        <div class="cart-row">
 
-                            <div class="cart-meta">
+                            <div>
 
-                                ${formatPrice(product.price)}
+                                <strong>
+                                    ${product.name}
+                                </strong>
 
-                                × ${item.quantity}
+                                <div class="cart-meta">
+
+                                    ${formatPrice(
+                                        product.price
+                                    )}
+
+                                    ×
+
+                                    ${item.quantity}
+
+                                    =
+
+                                    ${formatPrice(
+                                        product.price *
+                                        item.quantity
+                                    )}
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="quantity">
+
+                                <button
+                                    data-minus="${product.id}">
+                                    −
+                                </button>
+
+                                <span>
+                                    ${item.quantity}
+                                </span>
+
+                                <button
+                                    data-plus="${product.id}">
+                                    +
+                                </button>
+
+                                <button
+                                    class="remove-button"
+                                    data-remove="${product.id}">
+                                    Suppr.
+                                </button>
 
                             </div>
 
                         </div>
 
-                        <div class="quantity">
+                    `;
 
-                            <button
-                                data-minus="${product.id}">
-                                −
-                            </button>
-
-                            <span>
-                                ${item.quantity}
-                            </span>
-
-                            <button
-                                data-plus="${product.id}">
-                                +
-                            </button>
-
-                            <button
-                                class="remove-button"
-                                data-remove="${product.id}">
-
-                                Suppr.
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                `;
-
-            }).join("");
+                })
+                .join("");
 
     }
 
+
     let total = 0;
+
     let quantity = 0;
+
 
     cart.forEach(item => {
 
@@ -476,16 +525,20 @@ function renderCart() {
                     p.id === item.id
             );
 
+
         if (!product) return;
+
 
         total +=
             product.price *
             item.quantity;
 
+
         quantity +=
             item.quantity;
 
     });
+
 
     if (cartTotal) {
 
@@ -494,12 +547,14 @@ function renderCart() {
 
     }
 
+
     if (cartCount) {
 
         cartCount.textContent =
             quantity;
 
     }
+
 
     document
         .querySelectorAll("[data-minus]")
@@ -518,6 +573,7 @@ function renderCart() {
 
         });
 
+
     document
         .querySelectorAll("[data-plus]")
         .forEach(button => {
@@ -534,6 +590,7 @@ function renderCart() {
             };
 
         });
+
 
     document
         .querySelectorAll("[data-remove]")
@@ -576,9 +633,11 @@ document
 
                     });
 
+
                 button.classList.add(
                     "active"
                 );
+
 
                 renderProducts(
                     button.dataset.filter
@@ -604,7 +663,11 @@ const navLinks =
         "navLinks"
     );
 
-if (menuToggle && navLinks) {
+
+if (
+    menuToggle &&
+    navLinks
+) {
 
     menuToggle.addEventListener(
         "click",
@@ -621,17 +684,97 @@ if (menuToggle && navLinks) {
 
 
 /* =====================================================
-   COMPTE UTILISATEUR
+   LIGHTBOX
 ===================================================== */
 
-const loginForm =
+const lightbox =
     document.getElementById(
-        "loginForm"
+        "lightbox"
     );
+
+const lightboxImage =
+    document.getElementById(
+        "lightboxImage"
+    );
+
+const closeLightbox =
+    document.getElementById(
+        "closeLightbox"
+    );
+
+
+document
+    .querySelectorAll(
+        ".gallery-image"
+    )
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const image =
+                    button.querySelector(
+                        "img"
+                    );
+
+
+                if (
+                    !image ||
+                    !lightbox ||
+                    !lightboxImage
+                )
+                    return;
+
+
+                lightboxImage.src =
+                    image.src;
+
+                lightboxImage.alt =
+                    image.alt;
+
+                lightbox.classList.add(
+                    "open"
+                );
+
+            }
+        );
+
+    });
+
+
+if (closeLightbox) {
+
+    closeLightbox.addEventListener(
+        "click",
+        () => {
+
+            if (lightbox) {
+
+                lightbox.classList.remove(
+                    "open"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   CRÉATION DE COMPTE
+===================================================== */
 
 const signupForm =
     document.getElementById(
         "signupForm"
+    );
+
+const loginForm =
+    document.getElementById(
+        "loginForm"
     );
 
 const logoutButton =
@@ -645,7 +788,27 @@ const accountMessage =
     );
 
 
-/* CRÉER UN COMPTE */
+/* =====================================================
+   MESSAGE COMPTE
+===================================================== */
+
+function accountMsg(
+    message
+) {
+
+    if (accountMessage) {
+
+        accountMessage.textContent =
+            message;
+
+    }
+
+}
+
+
+/* =====================================================
+   CRÉER UN COMPTE
+===================================================== */
 
 if (signupForm) {
 
@@ -655,40 +818,65 @@ if (signupForm) {
 
             event.preventDefault();
 
+
             const email =
                 document.getElementById(
                     "signupEmail"
-                ).value;
+                ).value.trim();
+
 
             const password =
                 document.getElementById(
                     "signupPassword"
                 ).value;
 
+
+            accountMsg(
+                "Création du compte..."
+            );
+
+
             const {
                 data,
                 error
             } =
-                await supabaseClient.auth.signUp({
+                await supabaseClient
+                    .auth
+                    .signUp({
 
-                    email: email,
+                        email:
+                            email,
 
-                    password: password
+                        password:
+                            password
 
-                });
+                    });
+
 
             if (error) {
 
-                accountMessage.textContent =
+                console.error(error);
+
+                accountMsg(
                     "Erreur : " +
-                    error.message;
+                    error.message
+                );
 
                 return;
 
             }
 
-            accountMessage.textContent =
-                "Compte créé ! Vérifie ton e-mail. 📧";
+
+            console.log(
+                "Compte créé :",
+                data
+            );
+
+
+            accountMsg(
+                "Compte créé avec succès ✓"
+            );
+
 
             signupForm.reset();
 
@@ -698,7 +886,9 @@ if (signupForm) {
 }
 
 
-/* SE CONNECTER */
+/* =====================================================
+   CONNEXION
+===================================================== */
 
 if (loginForm) {
 
@@ -708,15 +898,23 @@ if (loginForm) {
 
             event.preventDefault();
 
+
             const email =
                 document.getElementById(
                     "loginEmail"
-                ).value;
+                ).value.trim();
+
 
             const password =
                 document.getElementById(
                     "loginPassword"
                 ).value;
+
+
+            accountMsg(
+                "Connexion..."
+            );
+
 
             const {
                 data,
@@ -726,28 +924,45 @@ if (loginForm) {
                     .auth
                     .signInWithPassword({
 
-                        email: email,
+                        email:
+                            email,
 
-                        password: password
+                        password:
+                            password
 
                     });
 
+
             if (error) {
 
-                accountMessage.textContent =
+                console.error(error);
+
+                accountMsg(
                     "Erreur : " +
-                    error.message;
+                    error.message
+                );
 
                 return;
 
             }
 
-            accountMessage.textContent =
-                "Connexion réussie ! Bienvenue 👋";
+
+            console.log(
+                "Utilisateur connecté :",
+                data.user
+            );
+
+
+            accountMsg(
+                "Connexion réussie ✓"
+            );
+
 
             loginForm.reset();
 
-            updateAccount();
+            updateAccountUI(
+                data.user
+            );
 
         }
     );
@@ -755,7 +970,9 @@ if (loginForm) {
 }
 
 
-/* SE DÉCONNECTER */
+/* =====================================================
+   DÉCONNEXION
+===================================================== */
 
 if (logoutButton) {
 
@@ -763,14 +980,34 @@ if (logoutButton) {
         "click",
         async () => {
 
-            await supabaseClient
-                .auth
-                .signOut();
+            const {
+                error
+            } =
+                await supabaseClient
+                    .auth
+                    .signOut();
 
-            accountMessage.textContent =
-                "Vous êtes déconnecté.";
 
-            updateAccount();
+            if (error) {
+
+                accountMsg(
+                    "Erreur : " +
+                    error.message
+                );
+
+                return;
+
+            }
+
+
+            accountMsg(
+                "Vous êtes déconnecté."
+            );
+
+
+            updateAccountUI(
+                null
+            );
 
         }
     );
@@ -778,9 +1015,54 @@ if (logoutButton) {
 }
 
 
-/* METTRE À JOUR LE COMPTE */
+/* =====================================================
+   INTERFACE COMPTE
+===================================================== */
 
-async function updateAccount() {
+function updateAccountUI(
+    user
+) {
+
+    if (
+        signupForm &&
+        loginForm &&
+        logoutButton
+    ) {
+
+        if (user) {
+
+            signupForm.style.display =
+                "none";
+
+            loginForm.style.display =
+                "none";
+
+            logoutButton.style.display =
+                "block";
+
+        } else {
+
+            signupForm.style.display =
+                "block";
+
+            loginForm.style.display =
+                "block";
+
+            logoutButton.style.display =
+                "none";
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   VÉRIFIER UTILISATEUR
+===================================================== */
+
+async function checkUser() {
 
     const {
         data
@@ -789,40 +1071,28 @@ async function updateAccount() {
             .auth
             .getUser();
 
-    if (
-        data.user
-    ) {
 
-        if (loginForm)
-            loginForm.style.display =
-                "none";
+    if (data.user) {
 
-        if (signupForm)
-            signupForm.style.display =
-                "none";
+        console.log(
+            "Utilisateur connecté :",
+            data.user.email
+        );
 
-        if (logoutButton)
-            logoutButton.style.display =
-                "inline-block";
 
-        if (accountMessage)
-            accountMessage.textContent =
-                "Connecté avec : " +
-                data.user.email;
+        updateAccountUI(
+            data.user
+        );
 
     } else {
 
-        if (loginForm)
-            loginForm.style.display =
-                "block";
+        console.log(
+            "Aucun utilisateur connecté."
+        );
 
-        if (signupForm)
-            signupForm.style.display =
-                "block";
-
-        if (logoutButton)
-            logoutButton.style.display =
-                "none";
+        updateAccountUI(
+            null
+        );
 
     }
 
@@ -830,7 +1100,7 @@ async function updateAccount() {
 
 
 /* =====================================================
-   FORMULAIRE COMMANDE
+   COMMANDES SUPABASE
 ===================================================== */
 
 const orderForm =
@@ -838,13 +1108,17 @@ const orderForm =
         "orderForm"
     );
 
+
 if (orderForm) {
 
     orderForm.addEventListener(
         "submit",
-        event => {
+        async event => {
 
             event.preventDefault();
+
+
+            /* PANIER VIDE */
 
             if (cart.length === 0) {
 
@@ -856,11 +1130,239 @@ if (orderForm) {
 
             }
 
+
+            /* UTILISATEUR */
+
+            const {
+                data:
+                    userData
+            } =
+                await supabaseClient
+                    .auth
+                    .getUser();
+
+
+            /*
+             * Pour l'instant la commande
+             * peut être passée sans compte.
+             */
+
+
+            /* FORMULAIRE */
+
+            const formData =
+                new FormData(
+                    orderForm
+                );
+
+
+            /* TOTAL */
+
+            const total =
+                cart.reduce(
+                    (
+                        sum,
+                        item
+                    ) => {
+
+                        const product =
+                            products.find(
+                                p =>
+                                    p.id ===
+                                    item.id
+                            );
+
+
+                        if (!product)
+                            return sum;
+
+
+                        return sum +
+                            (
+                                product.price *
+                                item.quantity
+                            );
+
+                    },
+                    0
+                );
+
+
+            /* COMMANDE */
+
+            const order = {
+
+                prenom:
+                    formData.get(
+                        "prenom"
+                    ),
+
+                nom:
+                    formData.get(
+                        "nom"
+                    ),
+
+                telephone:
+                    formData.get(
+                        "telephone"
+                    ),
+
+                email:
+                    formData.get(
+                        "email"
+                    ),
+
+                date_retrait:
+                    formData.get(
+                        "date"
+                    ),
+
+                heure_retrait:
+                    formData.get(
+                        "heure"
+                    ),
+
+                commentaire:
+                    formData.get(
+                        "commentaire"
+                    ),
+
+                produits:
+                    cart,
+
+                total:
+                    total
+
+            };
+
+
+            console.log(
+                "Commande envoyée :",
+                order
+            );
+
+
+            /* ENVOI SUPABASE */
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient
+                    .from("orders")
+                    .insert(
+                        [order]
+                    )
+                    .select();
+
+
+            /* ERREUR */
+
+            if (error) {
+
+                console.error(
+                    "Erreur commande :",
+                    error
+                );
+
+
+                showToast(
+                    "Erreur : " +
+                    error.message
+                );
+
+
+                return;
+
+            }
+
+
+            /* SUCCÈS */
+
+            console.log(
+                "Commande enregistrée :",
+                data
+            );
+
+
             showToast(
                 "Commande enregistrée ✓"
             );
 
+
+            /* VIDER PANIER */
+
+            cart = [];
+
+            saveCart();
+
+            renderCart();
+
             orderForm.reset();
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   FORMULAIRE PERSONNALISÉ
+===================================================== */
+
+const customForm =
+    document.getElementById(
+        "customForm"
+    );
+
+
+if (customForm) {
+
+    customForm.addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
+
+
+            showToast(
+                "Demande personnalisée envoyée ✓"
+            );
+
+
+            customForm.reset();
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   CONTACT
+===================================================== */
+
+const contactForm =
+    document.getElementById(
+        "contactForm"
+    );
+
+
+if (contactForm) {
+
+    contactForm.addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
+
+
+            showToast(
+                "Message envoyé ✓"
+            );
+
+
+            contactForm.reset();
 
         }
     );
@@ -876,6 +1378,7 @@ const year =
     document.getElementById(
         "year"
     );
+
 
 if (year) {
 
@@ -893,8 +1396,9 @@ renderProducts();
 
 renderCart();
 
-updateAccount();
+checkUser();
+
 
 console.log(
-    "SITE INITIALISÉ !"
+    "LES DÉLICES DE PAULINE : SCRIPT OK ✓"
 );
