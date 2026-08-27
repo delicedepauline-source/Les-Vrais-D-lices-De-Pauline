@@ -1,4 +1,4 @@
-*/* =====================================================
+/* =====================================================
    LES DÉLICES DE PAULINE
    SCRIPT COMPLET
    SUPABASE + PRODUITS + PANIER + COMPTES + COMMANDES
