@@ -1,16 +1,16 @@
 /* =====================================================
    LES DÉLICES DE PAULINE
-   SCRIPT COMPLET
-   SUPABASE + PRODUITS + PANIER + COMPTES + COMMANDES
+   SCRIPT.JS COMPLET
 ===================================================== */
+
+console.log("SCRIPT.JS EST BIEN CHARGÉ !");
 
 
 /* =====================================================
    SUPABASE
 ===================================================== */
 
-const SUPABASE_URL =
-    "https://qyysftxupnnfikmrjjue.supabase.co";
+const SUPABASE_URL = "https://qyysftxupnnfikmrjjue.supabase.co";
 
 const SUPABASE_KEY =
     "sb_publishable_0FTC_yZFfch1S10KkDLGqA_pmZTxJMC";
@@ -21,11 +21,7 @@ const supabaseClient =
         SUPABASE_KEY
     );
 
-console.log("SCRIPT.JS CHARGE");
-console.log(
-    "Supabase :",
-    typeof supabaseClient
-);
+console.log("Supabase connecté :", supabaseClient);
 
 
 /* =====================================================
@@ -149,12 +145,19 @@ const products = [
    PANIER
 ===================================================== */
 
-let cart =
-    JSON.parse(
-        localStorage.getItem(
-            "les-delices-panier"
-        )
-    ) || [];
+let cart = JSON.parse(
+    localStorage.getItem("les-delices-panier")
+) || [];
+
+
+function saveCart() {
+
+    localStorage.setItem(
+        "les-delices-panier",
+        JSON.stringify(cart)
+    );
+
+}
 
 
 /* =====================================================
@@ -162,29 +165,19 @@ let cart =
 ===================================================== */
 
 const productsGrid =
-    document.getElementById(
-        "productsGrid"
-    );
+    document.getElementById("productsGrid");
 
 const cartItems =
-    document.getElementById(
-        "cartItems"
-    );
+    document.getElementById("cartItems");
 
 const cartTotal =
-    document.getElementById(
-        "cartTotal"
-    );
+    document.getElementById("cartTotal");
 
 const cartCount =
-    document.getElementById(
-        "cartCount"
-    );
+    document.getElementById("cartCount");
 
 const toast =
-    document.getElementById(
-        "toast"
-    );
+    document.getElementById("toast");
 
 
 /* =====================================================
@@ -212,53 +205,103 @@ function showToast(message) {
 
     if (!toast) return;
 
-    toast.textContent =
-        message;
+    toast.textContent = message;
 
-    toast.classList.add(
-        "show"
-    );
+    toast.classList.add("show");
 
-    setTimeout(
-        () => {
+    setTimeout(() => {
 
-            toast.classList.remove(
-                "show"
-            );
+        toast.classList.remove("show");
 
-        },
-        2500
-    );
+    }, 2500);
 
 }
 
 
 /* =====================================================
-   SAUVEGARDE PANIER
+   PRODUITS
 ===================================================== */
 
-function saveCart() {
+function renderProducts(filter = "all") {
 
-    localStorage.setItem(
-        "les-delices-panier",
-        JSON.stringify(cart)
-    );
+    if (!productsGrid) return;
+
+    const filteredProducts =
+        filter === "all"
+            ? products
+            : products.filter(
+                product =>
+                    product.category === filter
+            );
+
+    productsGrid.innerHTML =
+        filteredProducts.map(product => `
+
+            <article class="product-card">
+
+                <div
+                    class="product-image"
+                    style="background-image:url('${product.image}');">
+                </div>
+
+                <div class="product-info">
+
+                    <h3>
+                        ${product.name}
+                    </h3>
+
+                    <p>
+                        ${product.description}
+                    </p>
+
+                    <div class="product-bottom">
+
+                        <span class="price">
+                            ${formatPrice(product.price)}
+                        </span>
+
+                        <button
+                            class="add-button"
+                            data-add="${product.id}">
+                            Ajouter
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        `).join("");
+
+    document
+        .querySelectorAll("[data-add]")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    addToCart(
+                        Number(button.dataset.add)
+                    );
+
+                }
+            );
+
+        });
 
 }
 
 
 /* =====================================================
-   AJOUTER AU PANIER
+   AJOUT PANIER
 ===================================================== */
 
 function addToCart(id) {
 
     const existing =
-        cart.find(
-            item =>
-                item.id === id
-        );
-
+        cart.find(item => item.id === id);
 
     if (existing) {
 
@@ -267,15 +310,11 @@ function addToCart(id) {
     } else {
 
         cart.push({
-
             id: id,
-
             quantity: 1
-
         });
 
     }
-
 
     saveCart();
 
@@ -289,38 +328,26 @@ function addToCart(id) {
 
 
 /* =====================================================
-   MODIFIER QUANTITÉ
+   QUANTITE
 ===================================================== */
 
-function changeQuantity(
-    id,
-    amount
-) {
+function changeQuantity(id, amount) {
 
     const item =
-        cart.find(
-            item =>
-                item.id === id
-        );
-
+        cart.find(item => item.id === id);
 
     if (!item) return;
 
-
-    item.quantity +=
-        amount;
-
+    item.quantity += amount;
 
     if (item.quantity <= 0) {
 
         cart =
             cart.filter(
-                item =>
-                    item.id !== id
+                item => item.id !== id
             );
 
     }
-
 
     saveCart();
 
@@ -337,114 +364,12 @@ function removeFromCart(id) {
 
     cart =
         cart.filter(
-            item =>
-                item.id !== id
+            item => item.id !== id
         );
-
 
     saveCart();
 
     renderCart();
-
-}
-
-
-/* =====================================================
-   AFFICHER PRODUITS
-===================================================== */
-
-function renderProducts(
-    filter = "all"
-) {
-
-    if (!productsGrid)
-        return;
-
-
-    const filteredProducts =
-        filter === "all"
-
-            ? products
-
-            : products.filter(
-                product =>
-                    product.category ===
-                    filter
-            );
-
-
-    productsGrid.innerHTML =
-        filteredProducts
-            .map(
-                product => `
-
-                <article class="product-card">
-
-                    <div
-                        class="product-image"
-                        style="
-                            background-image:
-                            url('${product.image}');
-                        ">
-                    </div>
-
-                    <div class="product-info">
-
-                        <h3>
-                            ${product.name}
-                        </h3>
-
-                        <p>
-                            ${product.description}
-                        </p>
-
-                        <div class="product-bottom">
-
-                            <span class="price">
-                                ${formatPrice(
-                                    product.price
-                                )}
-                            </span>
-
-                            <button
-                                class="add-button"
-                                data-add="${product.id}">
-                                Ajouter
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </article>
-
-            `
-            )
-            .join("");
-
-
-    document
-        .querySelectorAll(
-            "[data-add]"
-        )
-        .forEach(
-            button => {
-
-                button.addEventListener(
-                    "click",
-                    () => {
-
-                        addToCart(
-                            Number(
-                                button.dataset.add
-                            )
-                        );
-
-                    }
-                );
-
-            }
-        );
 
 }
 
@@ -455,146 +380,112 @@ function renderProducts(
 
 function renderCart() {
 
-    if (!cartItems)
-        return;
-
+    if (!cartItems) return;
 
     if (cart.length === 0) {
 
         cartItems.innerHTML = `
-
             <div class="empty-cart">
                 Votre panier est vide.
             </div>
-
         `;
 
     } else {
 
         cartItems.innerHTML =
-            cart
-                .map(
-                    item => {
+            cart.map(item => {
 
-                        const product =
-                            products.find(
-                                p =>
-                                    p.id ===
-                                    item.id
-                            );
+                const product =
+                    products.find(
+                        p => p.id === item.id
+                    );
 
+                if (!product) return "";
 
-                        if (!product)
-                            return "";
+                return `
 
+                    <div class="cart-row">
 
-                        return `
+                        <div>
 
-                            <div class="cart-row">
+                            <strong>
+                                ${product.name}
+                            </strong>
 
-                                <div>
+                            <div class="cart-meta">
 
-                                    <strong>
-                                        ${product.name}
-                                    </strong>
-
-                                    <div class="cart-meta">
-
-                                        ${formatPrice(
-                                            product.price
-                                        )}
-
-                                        ×
-
-                                        ${item.quantity}
-
-                                        =
-
-                                        ${formatPrice(
-                                            product.price *
-                                            item.quantity
-                                        )}
-
-                                    </div>
-
-                                </div>
-
-                                <div class="quantity">
-
-                                    <button
-                                        data-minus="${product.id}">
-                                        −
-                                    </button>
-
-                                    <span>
-                                        ${item.quantity}
-                                    </span>
-
-                                    <button
-                                        data-plus="${product.id}">
-                                        +
-                                    </button>
-
-                                    <button
-                                        class="remove-button"
-                                        data-remove="${product.id}">
-                                        Suppr.
-                                    </button>
-
-                                </div>
+                                ${formatPrice(product.price)}
+                                ×
+                                ${item.quantity}
+                                =
+                                ${formatPrice(
+                                    product.price *
+                                    item.quantity
+                                )}
 
                             </div>
 
-                        `;
+                        </div>
 
-                    }
-                )
-                .join("");
+                        <div class="quantity">
+
+                            <button
+                                data-minus="${product.id}">
+                                −
+                            </button>
+
+                            <span>
+                                ${item.quantity}
+                            </span>
+
+                            <button
+                                data-plus="${product.id}">
+                                +
+                            </button>
+
+                            <button
+                                class="remove-button"
+                                data-remove="${product.id}">
+                                Suppr.
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }).join("");
 
     }
 
-
     let total = 0;
-
     let quantity = 0;
 
+    cart.forEach(item => {
 
-    cart.forEach(
-        item => {
+        const product =
+            products.find(
+                p => p.id === item.id
+            );
 
-            const product =
-                products.find(
-                    p =>
-                        p.id ===
-                        item.id
-                );
+        if (!product) return;
 
+        total +=
+            product.price *
+            item.quantity;
 
-            if (!product)
-                return;
+        quantity +=
+            item.quantity;
 
-
-            total +=
-                product.price *
-                item.quantity;
-
-
-            quantity +=
-                item.quantity;
-
-        }
-    );
-
+    });
 
     if (cartTotal) {
 
         cartTotal.textContent =
-            formatPrice(
-                total
-            );
+            formatPrice(total);
 
     }
-
 
     if (cartCount) {
 
@@ -603,73 +494,49 @@ function renderCart() {
 
     }
 
+    document
+        .querySelectorAll("[data-minus]")
+        .forEach(button => {
+
+            button.onclick = () => {
+
+                changeQuantity(
+                    Number(button.dataset.minus),
+                    -1
+                );
+
+            };
+
+        });
 
     document
-        .querySelectorAll(
-            "[data-minus]"
-        )
-        .forEach(
-            button => {
+        .querySelectorAll("[data-plus]")
+        .forEach(button => {
 
-                button.onclick =
-                    () => {
+            button.onclick = () => {
 
-                        changeQuantity(
-                            Number(
-                                button.dataset.minus
-                            ),
-                            -1
-                        );
+                changeQuantity(
+                    Number(button.dataset.plus),
+                    1
+                );
 
-                    };
+            };
 
-            }
-        );
-
+        });
 
     document
-        .querySelectorAll(
-            "[data-plus]"
-        )
-        .forEach(
-            button => {
+        .querySelectorAll("[data-remove]")
+        .forEach(button => {
 
-                button.onclick =
-                    () => {
+            button.onclick = () => {
 
-                        changeQuantity(
-                            Number(
-                                button.dataset.plus
-                            ),
-                            1
-                        );
+                removeFromCart(
+                    Number(button.dataset.remove)
+                );
 
-                    };
+            };
 
-            }
-        );
-
-
-    document
-        .querySelectorAll(
-            "[data-remove]"
-        )
-        .forEach(
-            button => {
-
-                button.onclick =
-                    () => {
-
-                        removeFromCart(
-                            Number(
-                                button.dataset.remove
-                            )
-                        );
-
-                    };
-
-            }
-        );
+        });
 
 }
 
@@ -679,45 +546,33 @@ function renderCart() {
 ===================================================== */
 
 document
-    .querySelectorAll(
-        ".filter"
-    )
-    .forEach(
-        button => {
+    .querySelectorAll(".filter")
+    .forEach(button => {
 
-            button.addEventListener(
-                "click",
-                () => {
+        button.addEventListener(
+            "click",
+            () => {
 
-                    document
-                        .querySelectorAll(
-                            ".filter"
-                        )
-                        .forEach(
-                            btn => {
+                document
+                    .querySelectorAll(".filter")
+                    .forEach(btn => {
 
-                                btn.classList.remove(
-                                    "active"
-                                );
-
-                            }
+                        btn.classList.remove(
+                            "active"
                         );
 
+                    });
 
-                    button.classList.add(
-                        "active"
-                    );
+                button.classList.add("active");
 
+                renderProducts(
+                    button.dataset.filter
+                );
 
-                    renderProducts(
-                        button.dataset.filter
-                    );
+            }
+        );
 
-                }
-            );
-
-        }
-    );
+    });
 
 
 /* =====================================================
@@ -725,20 +580,12 @@ document
 ===================================================== */
 
 const menuToggle =
-    document.getElementById(
-        "menuToggle"
-    );
+    document.getElementById("menuToggle");
 
 const navLinks =
-    document.getElementById(
-        "navLinks"
-    );
+    document.getElementById("navLinks");
 
-
-if (
-    menuToggle &&
-    navLinks
-) {
+if (menuToggle && navLinks) {
 
     menuToggle.addEventListener(
         "click",
@@ -751,92 +598,70 @@ if (
         }
     );
 
-
     document
-        .querySelectorAll(
-            ".nav-links a"
-        )
-        .forEach(
-            link => {
+        .querySelectorAll(".nav-links a")
+        .forEach(link => {
 
-                link.addEventListener(
-                    "click",
-                    () => {
-
-                        navLinks.classList.remove(
-                            "open"
-                        );
-
-                    }
-                );
-
-            }
-        );
-
-}
-
-
-/* =====================================================
-   GALERIE / LIGHTBOX
-===================================================== */
-
-const lightbox =
-    document.getElementById(
-        "lightbox"
-    );
-
-const lightboxImage =
-    document.getElementById(
-        "lightboxImage"
-    );
-
-const closeLightbox =
-    document.getElementById(
-        "closeLightbox"
-    );
-
-
-document
-    .querySelectorAll(
-        ".gallery-image"
-    )
-    .forEach(
-        button => {
-
-            button.addEventListener(
+            link.addEventListener(
                 "click",
                 () => {
 
-                    const image =
-                        button.querySelector(
-                            "img"
-                        );
-
-
-                    if (
-                        !image ||
-                        !lightbox ||
-                        !lightboxImage
-                    )
-                        return;
-
-
-                    lightboxImage.src =
-                        image.src;
-
-                    lightboxImage.alt =
-                        image.alt;
-
-                    lightbox.classList.add(
+                    navLinks.classList.remove(
                         "open"
                     );
 
                 }
             );
 
-        }
-    );
+        });
 
+}
+
+
+/* =====================================================
+   GALERIE
+===================================================== */
+
+const lightbox =
+    document.getElementById("lightbox");
+
+const lightboxImage =
+    document.getElementById("lightboxImage");
+
+const closeLightbox =
+    document.getElementById("closeLightbox");
+
+document
+    .querySelectorAll(".gallery-image")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const image =
+                    button.querySelector("img");
+
+                if (
+                    !image ||
+                    !lightbox ||
+                    !lightboxImage
+                ) return;
+
+                lightboxImage.src =
+                    image.src;
+
+                lightboxImage.alt =
+                    image.alt;
+
+                lightbox.classList.add(
+                    "open"
+                );
+
+            }
+        );
+
+    });
 
 if (closeLightbox) {
 
@@ -857,7 +682,6 @@ if (closeLightbox) {
 
 }
 
-
 if (lightbox) {
 
     lightbox.addEventListener(
@@ -865,8 +689,7 @@ if (lightbox) {
         event => {
 
             if (
-                event.target ===
-                lightbox
+                event.target === lightbox
             ) {
 
                 lightbox.classList.remove(
@@ -882,47 +705,11 @@ if (lightbox) {
 
 
 /* =====================================================
-   COMPTE
+   CREATION DE COMPTE
 ===================================================== */
 
 const signupForm =
-    document.getElementById(
-        "signupForm"
-    );
-
-const loginForm =
-    document.getElementById(
-        "loginForm"
-    );
-
-const logoutButton =
-    document.getElementById(
-        "logoutButton"
-    );
-
-const accountMessage =
-    document.getElementById(
-        "accountMessage"
-    );
-
-
-function accountMsg(
-    message
-) {
-
-    if (accountMessage) {
-
-        accountMessage.textContent =
-            message;
-
-    }
-
-}
-
-
-/* =====================================================
-   CRÉER UN COMPTE
-===================================================== */
+    document.getElementById("signupForm");
 
 if (signupForm) {
 
@@ -932,75 +719,55 @@ if (signupForm) {
 
             event.preventDefault();
 
-
             const email =
-                document
-                    .getElementById(
-                        "signupEmail"
-                    )
-                    .value
-                    .trim();
-
+                document.getElementById(
+                    "signupEmail"
+                ).value.trim();
 
             const password =
-                document
-                    .getElementById(
-                        "signupPassword"
-                    )
-                    .value;
+                document.getElementById(
+                    "signupPassword"
+                ).value;
 
+            const message =
+                document.getElementById(
+                    "accountMessage"
+                );
 
-            accountMsg(
-                "Création du compte..."
-            );
-
+            message.textContent =
+                "Création du compte...";
 
             const {
                 data,
                 error
             } =
-                await supabaseClient
-                    .auth
-                    .signUp({
-
-                        email:
-                            email,
-
-                        password:
-                            password
-
-                    });
-
+                await supabaseClient.auth.signUp({
+                    email: email,
+                    password: password
+                });
 
             if (error) {
 
                 console.error(
-                    "Erreur inscription :",
+                    "Erreur création compte :",
                     error
                 );
 
-
-                accountMsg(
+                message.textContent =
                     "Erreur : " +
-                    error.message
-                );
-
+                    error.message;
 
                 return;
 
             }
-
 
             console.log(
                 "Compte créé :",
                 data
             );
 
-
-            accountMsg(
-                "Compte créé avec succès ✓"
-            );
-
+            message.textContent =
+                "Compte créé avec succès ✓";
 
             signupForm.reset();
 
@@ -1014,6 +781,9 @@ if (signupForm) {
    CONNEXION
 ===================================================== */
 
+const loginForm =
+    document.getElementById("loginForm");
+
 if (loginForm) {
 
     loginForm.addEventListener(
@@ -1022,45 +792,32 @@ if (loginForm) {
 
             event.preventDefault();
 
-
             const email =
-                document
-                    .getElementById(
-                        "loginEmail"
-                    )
-                    .value
-                    .trim();
-
+                document.getElementById(
+                    "loginEmail"
+                ).value.trim();
 
             const password =
-                document
-                    .getElementById(
-                        "loginPassword"
-                    )
-                    .value;
+                document.getElementById(
+                    "loginPassword"
+                ).value;
 
+            const message =
+                document.getElementById(
+                    "accountMessage"
+                );
 
-            accountMsg(
-                "Connexion..."
-            );
-
+            message.textContent =
+                "Connexion...";
 
             const {
                 data,
                 error
             } =
-                await supabaseClient
-                    .auth
-                    .signInWithPassword({
-
-                        email:
-                            email,
-
-                        password:
-                            password
-
-                    });
-
+                await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
 
             if (error) {
 
@@ -1069,34 +826,25 @@ if (loginForm) {
                     error
                 );
 
-
-                accountMsg(
+                message.textContent =
                     "Erreur : " +
-                    error.message
-                );
-
+                    error.message;
 
                 return;
 
             }
-
 
             console.log(
                 "Utilisateur connecté :",
                 data.user
             );
 
-
-            accountMsg(
-                "Connexion réussie ✓"
-            );
-
+            message.textContent =
+                "Connexion réussie ✓";
 
             loginForm.reset();
 
-            updateAccountUI(
-                data.user
-            );
+            updateAccountDisplay();
 
         }
     );
@@ -1105,8 +853,11 @@ if (loginForm) {
 
 
 /* =====================================================
-   DÉCONNEXION
+   DECONNEXION
 ===================================================== */
+
+const logoutButton =
+    document.getElementById("logoutButton");
 
 if (logoutButton) {
 
@@ -1117,37 +868,24 @@ if (logoutButton) {
             const {
                 error
             } =
-                await supabaseClient
-                    .auth
-                    .signOut();
-
+                await supabaseClient.auth.signOut();
 
             if (error) {
 
                 console.error(
+                    "Erreur déconnexion :",
                     error
                 );
-
-
-                accountMsg(
-                    "Erreur : " +
-                    error.message
-                );
-
 
                 return;
 
             }
 
-
-            accountMsg(
-                "Vous êtes déconnecté."
+            showToast(
+                "Déconnexion réussie ✓"
             );
 
-
-            updateAccountUI(
-                null
-            );
+            updateAccountDisplay();
 
         }
     );
@@ -1156,97 +894,72 @@ if (logoutButton) {
 
 
 /* =====================================================
-   INTERFACE COMPTE
+   AFFICHER ETAT COMPTE
 ===================================================== */
 
-function updateAccountUI(
-    user
-) {
-
-    if (
-        !signupForm ||
-        !loginForm ||
-        !logoutButton
-    )
-        return;
-
-
-    if (user) {
-
-        signupForm.style.display =
-            "none";
-
-        loginForm.style.display =
-            "none";
-
-        logoutButton.style.display =
-            "block";
-
-    } else {
-
-        signupForm.style.display =
-            "block";
-
-        loginForm.style.display =
-            "block";
-
-        logoutButton.style.display =
-            "none";
-
-    }
-
-}
-
-
-/* =====================================================
-   VÉRIFIER SESSION
-===================================================== */
-
-async function checkUser() {
+async function updateAccountDisplay() {
 
     const {
         data,
         error
     } =
-        await supabaseClient
-            .auth
-            .getUser();
-
+        await supabaseClient.auth.getSession();
 
     if (error) {
 
-        console.log(
-            "Pas de session active."
+        console.error(
+            "Erreur session :",
+            error
         );
-
-
-        updateAccountUI(
-            null
-        );
-
 
         return;
 
     }
 
+    const session =
+        data.session;
 
-    if (data.user) {
+    const loginForm =
+        document.getElementById("loginForm");
 
-        console.log(
-            "Utilisateur connecté :",
-            data.user.email
-        );
+    const signupForm =
+        document.getElementById("signupForm");
 
+    const logoutButton =
+        document.getElementById("logoutButton");
 
-        updateAccountUI(
-            data.user
-        );
+    const message =
+        document.getElementById("accountMessage");
+
+    if (session) {
+
+        if (loginForm)
+            loginForm.style.display = "none";
+
+        if (signupForm)
+            signupForm.style.display = "none";
+
+        if (logoutButton)
+            logoutButton.style.display = "block";
+
+        if (message) {
+
+            message.textContent =
+                "Connecté avec : " +
+                session.user.email;
+
+        }
 
     } else {
 
-        updateAccountUI(
-            null
-        );
+        if (loginForm)
+            loginForm.style.display = "block";
+
+        if (signupForm)
+            signupForm.style.display = "block";
+
+        if (logoutButton)
+            logoutButton.style.display = "none";
 
     }
 
@@ -1254,14 +967,11 @@ async function checkUser() {
 
 
 /* =====================================================
-   COMMANDES
+   FORMULAIRE COMMANDE
 ===================================================== */
 
 const orderForm =
-    document.getElementById(
-        "orderForm"
-    );
-
+    document.getElementById("orderForm");
 
 if (orderForm) {
 
@@ -1271,99 +981,92 @@ if (orderForm) {
 
             event.preventDefault();
 
-
-            /* PANIER */
-
             if (cart.length === 0) {
 
                 showToast(
                     "Votre panier est vide."
                 );
 
+                return;
+
+            }
+
+            const {
+                data: sessionData
+            } =
+                await supabaseClient.auth.getSession();
+
+            const session =
+                sessionData.session;
+
+            if (!session) {
+
+                showToast(
+                    "Connectez-vous avant de commander."
+                );
+
+                document
+                    .getElementById("compte")
+                    ?.scrollIntoView({
+                        behavior: "smooth"
+                    });
 
                 return;
 
             }
 
-
-            /* FORMULAIRE */
-
             const formData =
-                new FormData(
-                    orderForm
-                );
-
-
-            /* TOTAL */
+                new FormData(orderForm);
 
             const total =
                 cart.reduce(
                     (
-                        sum,
+                        somme,
                         item
                     ) => {
 
                         const product =
                             products.find(
                                 p =>
-                                    p.id ===
-                                    item.id
+                                    p.id === item.id
                             );
-
 
                         if (!product)
-                            return sum;
+                            return somme;
 
-
-                        return sum +
-                            (
-                                product.price *
-                                item.quantity
-                            );
+                        return somme +
+                            product.price *
+                            item.quantity;
 
                     },
                     0
                 );
 
-
-            /* DONNÉES COMMANDE */
-
             const order = {
 
+                user_id:
+                    session.user.id,
+
                 prenom:
-                    formData.get(
-                        "prenom"
-                    ),
+                    formData.get("prenom"),
 
                 nom:
-                    formData.get(
-                        "nom"
-                    ),
+                    formData.get("nom"),
 
                 telephone:
-                    formData.get(
-                        "telephone"
-                    ),
+                    formData.get("telephone"),
 
                 email:
-                    formData.get(
-                        "email"
-                    ),
+                    formData.get("email"),
 
                 date_retrait:
-                    formData.get(
-                        "date"
-                    ),
+                    formData.get("date"),
 
                 heure_retrait:
-                    formData.get(
-                        "heure"
-                    ),
+                    formData.get("heure"),
 
                 commentaire:
-                    formData.get(
-                        "commentaire"
-                    ),
+                    formData.get("commentaire"),
 
                 produits:
                     cart,
@@ -1373,14 +1076,10 @@ if (orderForm) {
 
             };
 
-
             console.log(
-                "Commande :",
+                "Commande envoyée :",
                 order
             );
-
-
-            /* ENVOI SUPABASE */
 
             const {
                 data,
@@ -1388,13 +1087,8 @@ if (orderForm) {
             } =
                 await supabaseClient
                     .from("orders")
-                    .insert(
-                        [order]
-                    )
+                    .insert(order)
                     .select();
-
-
-            /* ERREUR */
 
             if (error) {
 
@@ -1403,32 +1097,23 @@ if (orderForm) {
                     error
                 );
 
-
                 showToast(
                     "Erreur : " +
                     error.message
                 );
 
-
                 return;
 
             }
 
-
-            /* SUCCÈS */
-
             console.log(
-                "Commande enregistrée :",
+                "COMMANDE ENREGISTRÉE :",
                 data
             );
-
 
             showToast(
                 "Commande enregistrée ✓"
             );
-
-
-            /* VIDER PANIER */
 
             cart = [];
 
@@ -1449,10 +1134,7 @@ if (orderForm) {
 ===================================================== */
 
 const customForm =
-    document.getElementById(
-        "customForm"
-    );
-
+    document.getElementById("customForm");
 
 if (customForm) {
 
@@ -1462,11 +1144,9 @@ if (customForm) {
 
             event.preventDefault();
 
-
             showToast(
                 "Demande personnalisée envoyée ✓"
             );
-
 
             customForm.reset();
 
@@ -1481,10 +1161,7 @@ if (customForm) {
 ===================================================== */
 
 const contactForm =
-    document.getElementById(
-        "contactForm"
-    );
-
+    document.getElementById("contactForm");
 
 if (contactForm) {
 
@@ -1494,11 +1171,9 @@ if (contactForm) {
 
             event.preventDefault();
 
-
             showToast(
                 "Message envoyé ✓"
             );
-
 
             contactForm.reset();
 
@@ -1509,14 +1184,11 @@ if (contactForm) {
 
 
 /* =====================================================
-   ANNÉE
+   ANNEE
 ===================================================== */
 
 const year =
-    document.getElementById(
-        "year"
-    );
-
+    document.getElementById("year");
 
 if (year) {
 
@@ -1534,9 +1206,6 @@ renderProducts();
 
 renderCart();
 
-checkUser();
+updateAccountDisplay();
 
-
-console.log(
-    "LES DÉLICES DE PAULINE : TOUT EST CHARGÉ ✓"
-);
+console.log("TOUT LE SCRIPT EST CHARGÉ ✓");
