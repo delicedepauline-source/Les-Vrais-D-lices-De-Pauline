@@ -3,7 +3,24 @@
    JAVASCRIPT
 ===================================================== */
 
-console.log("SCRIPT.JS EST BIEN CHARGÉ !");
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+    "https://qyysftxupnnfikmrjjue.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_0FTC_yZFfch1S10KkDLGqA_pmZTxJMC";
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+console.log("Supabase connecté !");
 
 
 /* =====================================================
@@ -127,41 +144,57 @@ const products = [
    PANIER
 ===================================================== */
 
-let cart = JSON.parse(
-    localStorage.getItem("les-delices-panier")
-) || [];
+let cart =
+    JSON.parse(
+        localStorage.getItem(
+            "les-delices-panier"
+        )
+    ) || [];
 
 
 /* =====================================================
-   ELEMENTS HTML
+   ÉLÉMENTS HTML
 ===================================================== */
 
 const productsGrid =
-    document.getElementById("productsGrid");
+    document.getElementById(
+        "productsGrid"
+    );
 
 const cartItems =
-    document.getElementById("cartItems");
+    document.getElementById(
+        "cartItems"
+    );
 
 const cartTotal =
-    document.getElementById("cartTotal");
+    document.getElementById(
+        "cartTotal"
+    );
 
 const cartCount =
-    document.getElementById("cartCount");
+    document.getElementById(
+        "cartCount"
+    );
 
 const toast =
-    document.getElementById("toast");
+    document.getElementById(
+        "toast"
+    );
 
 
 /* =====================================================
-   PRIX
+   FORMAT PRIX
 ===================================================== */
 
 function formatPrice(price) {
 
-    return price.toLocaleString("fr-FR", {
-        style: "currency",
-        currency: "EUR"
-    });
+    return price.toLocaleString(
+        "fr-FR",
+        {
+            style: "currency",
+            currency: "EUR"
+        }
+    );
 
 }
 
@@ -188,105 +221,12 @@ function showToast(message) {
 
 
 /* =====================================================
-   PANIER
-===================================================== */
-
-function saveCart() {
-
-    localStorage.setItem(
-        "les-delices-panier",
-        JSON.stringify(cart)
-    );
-
-}
-
-
-function addToCart(id) {
-
-    const existing =
-        cart.find(item => item.id === id);
-
-
-    if (existing) {
-
-        existing.quantity++;
-
-    } else {
-
-        cart.push({
-
-            id: id,
-
-            quantity: 1
-
-        });
-
-    }
-
-
-    saveCart();
-
-    renderCart();
-
-    showToast(
-        "Produit ajouté au panier ✓"
-    );
-
-}
-
-
-function changeQuantity(id, amount) {
-
-    const item =
-        cart.find(item => item.id === id);
-
-
-    if (!item) return;
-
-
-    item.quantity += amount;
-
-
-    if (item.quantity <= 0) {
-
-        cart =
-            cart.filter(
-                item => item.id !== id
-            );
-
-    }
-
-
-    saveCart();
-
-    renderCart();
-
-}
-
-
-function removeFromCart(id) {
-
-    cart =
-        cart.filter(
-            item => item.id !== id
-        );
-
-
-    saveCart();
-
-    renderCart();
-
-}
-
-
-/* =====================================================
-   AFFICHER LES PRODUITS
+   PRODUITS
 ===================================================== */
 
 function renderProducts(filter = "all") {
 
     if (!productsGrid) return;
-
 
     const filteredProducts =
         filter === "all"
@@ -295,7 +235,6 @@ function renderProducts(filter = "all") {
                 product =>
                     product.category === filter
             );
-
 
     productsGrid.innerHTML =
         filteredProducts.map(product => `
@@ -309,13 +248,9 @@ function renderProducts(filter = "all") {
 
                 <div class="product-info">
 
-                    <h3>
-                        ${product.name}
-                    </h3>
+                    <h3>${product.name}</h3>
 
-                    <p>
-                        ${product.description}
-                    </p>
+                    <p>${product.description}</p>
 
                     <div class="product-bottom">
 
@@ -326,7 +261,9 @@ function renderProducts(filter = "all") {
                         <button
                             class="add-button"
                             data-add="${product.id}">
+
                             Ajouter
+
                         </button>
 
                     </div>
@@ -336,7 +273,6 @@ function renderProducts(filter = "all") {
             </article>
 
         `).join("");
-
 
     document
         .querySelectorAll("[data-add]")
@@ -361,24 +297,105 @@ function renderProducts(filter = "all") {
 
 
 /* =====================================================
-   AFFICHER LE PANIER
+   PANIER
 ===================================================== */
+
+function saveCart() {
+
+    localStorage.setItem(
+        "les-delices-panier",
+        JSON.stringify(cart)
+    );
+
+}
+
+
+function addToCart(id) {
+
+    const existing =
+        cart.find(
+            item =>
+                item.id === id
+        );
+
+    if (existing) {
+
+        existing.quantity++;
+
+    } else {
+
+        cart.push({
+            id: id,
+            quantity: 1
+        });
+
+    }
+
+    saveCart();
+
+    renderCart();
+
+    showToast(
+        "Produit ajouté au panier ✓"
+    );
+
+}
+
+
+function changeQuantity(id, amount) {
+
+    const item =
+        cart.find(
+            item =>
+                item.id === id
+        );
+
+    if (!item) return;
+
+    item.quantity += amount;
+
+    if (item.quantity <= 0) {
+
+        cart =
+            cart.filter(
+                item =>
+                    item.id !== id
+            );
+
+    }
+
+    saveCart();
+
+    renderCart();
+
+}
+
+
+function removeFromCart(id) {
+
+    cart =
+        cart.filter(
+            item =>
+                item.id !== id
+        );
+
+    saveCart();
+
+    renderCart();
+
+}
+
 
 function renderCart() {
 
     if (!cartItems) return;
 
-
     if (cart.length === 0) {
 
         cartItems.innerHTML = `
-
             <div class="empty-cart">
-
                 Votre panier est vide.
-
             </div>
-
         `;
 
     } else {
@@ -388,12 +405,11 @@ function renderCart() {
 
                 const product =
                     products.find(
-                        p => p.id === item.id
+                        p =>
+                            p.id === item.id
                     );
 
-
                 if (!product) return "";
-
 
                 return `
 
@@ -409,21 +425,11 @@ function renderCart() {
 
                                 ${formatPrice(product.price)}
 
-                                ×
-
-                                ${item.quantity}
-
-                                =
-
-                                ${formatPrice(
-                                    product.price *
-                                    item.quantity
-                                )}
+                                × ${item.quantity}
 
                             </div>
 
                         </div>
-
 
                         <div class="quantity">
 
@@ -432,22 +438,21 @@ function renderCart() {
                                 −
                             </button>
 
-
                             <span>
                                 ${item.quantity}
                             </span>
-
 
                             <button
                                 data-plus="${product.id}">
                                 +
                             </button>
 
-
                             <button
                                 class="remove-button"
                                 data-remove="${product.id}">
+
                                 Suppr.
+
                             </button>
 
                         </div>
@@ -460,33 +465,27 @@ function renderCart() {
 
     }
 
-
     let total = 0;
-
     let quantity = 0;
-
 
     cart.forEach(item => {
 
         const product =
             products.find(
-                p => p.id === item.id
+                p =>
+                    p.id === item.id
             );
 
-
         if (!product) return;
-
 
         total +=
             product.price *
             item.quantity;
 
-
         quantity +=
             item.quantity;
 
     });
-
 
     if (cartTotal) {
 
@@ -495,14 +494,12 @@ function renderCart() {
 
     }
 
-
     if (cartCount) {
 
         cartCount.textContent =
             quantity;
 
     }
-
 
     document
         .querySelectorAll("[data-minus]")
@@ -521,7 +518,6 @@ function renderCart() {
 
         });
 
-
     document
         .querySelectorAll("[data-plus]")
         .forEach(button => {
@@ -538,7 +534,6 @@ function renderCart() {
             };
 
         });
-
 
     document
         .querySelectorAll("[data-remove]")
@@ -581,11 +576,9 @@ document
 
                     });
 
-
                 button.classList.add(
                     "active"
                 );
-
 
                 renderProducts(
                     button.dataset.filter
@@ -606,12 +599,10 @@ const menuToggle =
         "menuToggle"
     );
 
-
 const navLinks =
     document.getElementById(
         "navLinks"
     );
-
 
 if (menuToggle && navLinks) {
 
@@ -626,100 +617,80 @@ if (menuToggle && navLinks) {
         }
     );
 
-
-    document
-        .querySelectorAll(
-            ".nav-links a"
-        )
-        .forEach(link => {
-
-            link.addEventListener(
-                "click",
-                () => {
-
-                    navLinks.classList.remove(
-                        "open"
-                    );
-
-                }
-            );
-
-        });
-
 }
 
 
 /* =====================================================
-   GALERIE
+   COMPTE UTILISATEUR
 ===================================================== */
 
-const lightbox =
+const loginForm =
     document.getElementById(
-        "lightbox"
+        "loginForm"
+    );
+
+const signupForm =
+    document.getElementById(
+        "signupForm"
+    );
+
+const logoutButton =
+    document.getElementById(
+        "logoutButton"
+    );
+
+const accountMessage =
+    document.getElementById(
+        "accountMessage"
     );
 
 
-const lightboxImage =
-    document.getElementById(
-        "lightboxImage"
-    );
+/* CRÉER UN COMPTE */
 
+if (signupForm) {
 
-const closeLightbox =
-    document.getElementById(
-        "closeLightbox"
-    );
+    signupForm.addEventListener(
+        "submit",
+        async event => {
 
+            event.preventDefault();
 
-document
-    .querySelectorAll(".gallery-image")
-    .forEach(button => {
+            const email =
+                document.getElementById(
+                    "signupEmail"
+                ).value;
 
-        button.addEventListener(
-            "click",
-            () => {
+            const password =
+                document.getElementById(
+                    "signupPassword"
+                ).value;
 
-                const image =
-                    button.querySelector(
-                        "img"
-                    );
+            const {
+                data,
+                error
+            } =
+                await supabaseClient.auth.signUp({
 
+                    email: email,
 
-                if (!image || !lightbox || !lightboxImage)
-                    return;
+                    password: password
 
+                });
 
-                lightboxImage.src =
-                    image.src;
+            if (error) {
 
+                accountMessage.textContent =
+                    "Erreur : " +
+                    error.message;
 
-                lightboxImage.alt =
-                    image.alt;
-
-
-                lightbox.classList.add(
-                    "open"
-                );
+                return;
 
             }
-        );
 
-    });
+            accountMessage.textContent =
+                "Compte créé ! Vérifie ton e-mail. 📧";
 
-
-if (closeLightbox) {
-
-    closeLightbox.addEventListener(
-        "click",
-        () => {
-
-            if (lightbox) {
-
-                lightbox.classList.remove(
-                    "open"
-                );
-
-            }
+            signupForm.reset();
 
         }
     );
@@ -727,31 +698,139 @@ if (closeLightbox) {
 }
 
 
-if (lightbox) {
+/* SE CONNECTER */
 
-    lightbox.addEventListener(
-        "click",
-        event => {
+if (loginForm) {
 
-            if (
-                event.target ===
-                lightbox
-            ) {
+    loginForm.addEventListener(
+        "submit",
+        async event => {
 
-                lightbox.classList.remove(
-                    "open"
-                );
+            event.preventDefault();
+
+            const email =
+                document.getElementById(
+                    "loginEmail"
+                ).value;
+
+            const password =
+                document.getElementById(
+                    "loginPassword"
+                ).value;
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient
+                    .auth
+                    .signInWithPassword({
+
+                        email: email,
+
+                        password: password
+
+                    });
+
+            if (error) {
+
+                accountMessage.textContent =
+                    "Erreur : " +
+                    error.message;
+
+                return;
 
             }
 
+            accountMessage.textContent =
+                "Connexion réussie ! Bienvenue 👋";
+
+            loginForm.reset();
+
+            updateAccount();
+
         }
     );
+
+}
+
+
+/* SE DÉCONNECTER */
+
+if (logoutButton) {
+
+    logoutButton.addEventListener(
+        "click",
+        async () => {
+
+            await supabaseClient
+                .auth
+                .signOut();
+
+            accountMessage.textContent =
+                "Vous êtes déconnecté.";
+
+            updateAccount();
+
+        }
+    );
+
+}
+
+
+/* METTRE À JOUR LE COMPTE */
+
+async function updateAccount() {
+
+    const {
+        data
+    } =
+        await supabaseClient
+            .auth
+            .getUser();
+
+    if (
+        data.user
+    ) {
+
+        if (loginForm)
+            loginForm.style.display =
+                "none";
+
+        if (signupForm)
+            signupForm.style.display =
+                "none";
+
+        if (logoutButton)
+            logoutButton.style.display =
+                "inline-block";
+
+        if (accountMessage)
+            accountMessage.textContent =
+                "Connecté avec : " +
+                data.user.email;
+
+    } else {
+
+        if (loginForm)
+            loginForm.style.display =
+                "block";
+
+        if (signupForm)
+            signupForm.style.display =
+                "block";
+
+        if (logoutButton)
+            logoutButton.style.display =
+                "none";
+
+    }
 
 }
 
 
 /* =====================================================
-   COMMANDE
+   FORMULAIRE COMMANDE
 ===================================================== */
 
 const orderForm =
@@ -759,15 +838,13 @@ const orderForm =
         "orderForm"
     );
 
-
 if (orderForm) {
 
     orderForm.addEventListener(
         "submit",
-        async event => {
+        event => {
 
             event.preventDefault();
-
 
             if (cart.length === 0) {
 
@@ -779,158 +856,11 @@ if (orderForm) {
 
             }
 
-
-            const formData =
-                new FormData(
-                    orderForm
-                );
-
-
-            const order = {
-
-                prenom:
-                    formData.get(
-                        "prenom"
-                    ),
-
-                nom:
-                    formData.get(
-                        "nom"
-                    ),
-
-                telephone:
-                    formData.get(
-                        "telephone"
-                    ),
-
-                email:
-                    formData.get(
-                        "email"
-                    ),
-
-                date_retrait:
-                    formData.get(
-                        "date"
-                    ),
-
-                heure_retrait:
-                    formData.get(
-                        "heure"
-                    ),
-
-                commentaire:
-                    formData.get(
-                        "commentaire"
-                    ),
-
-                produits:
-                    cart,
-
-                total:
-                    cart.reduce(
-                        (
-                            total,
-                            item
-                        ) => {
-
-                            const product =
-                                products.find(
-                                    p =>
-                                        p.id ===
-                                        item.id
-                                );
-
-
-                            if (!product)
-                                return total;
-
-
-                            return total +
-                                (
-                                    product.price *
-                                    item.quantity
-                                );
-
-                        },
-                        0
-                    )
-
-            };
-
-
-            console.log(
-                "Commande prête :",
-                order
-            );
-
-
             showToast(
                 "Commande enregistrée ✓"
             );
 
-        }
-    );
-
-}
-
-
-/* =====================================================
-   DEMANDE PERSONNALISÉE
-===================================================== */
-
-const customForm =
-    document.getElementById(
-        "customForm"
-    );
-
-
-if (customForm) {
-
-    customForm.addEventListener(
-        "submit",
-        event => {
-
-            event.preventDefault();
-
-
-            showToast(
-                "Demande personnalisée envoyée ✓"
-            );
-
-
-            customForm.reset();
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   CONTACT
-===================================================== */
-
-const contactForm =
-    document.getElementById(
-        "contactForm"
-    );
-
-
-if (contactForm) {
-
-    contactForm.addEventListener(
-        "submit",
-        event => {
-
-            event.preventDefault();
-
-
-            showToast(
-                "Message envoyé ✓"
-            );
-
-
-            contactForm.reset();
+            orderForm.reset();
 
         }
     );
@@ -946,7 +876,6 @@ const year =
     document.getElementById(
         "year"
     );
-
 
 if (year) {
 
@@ -964,7 +893,8 @@ renderProducts();
 
 renderCart();
 
+updateAccount();
 
 console.log(
-    "TEST SCRIPT.JS OK"
+    "SITE INITIALISÉ !"
 );
